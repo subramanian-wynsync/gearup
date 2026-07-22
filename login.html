@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Log in</title>
+<style>
+body{margin:0;background:#080d18;color:#eaf1ff;font-family:Inter,Arial,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center}
+.card{background:#0c1424;border:1px solid rgba(130,175,255,.14);border-radius:20px;padding:34px;width:100%;max-width:400px;text-align:center}
+.logo{font-family:'Space Grotesk',Arial,sans-serif;font-weight:800;font-size:22px;margin-bottom:6px}.logo b{color:#C88A4B}
+h1{font-size:20px;margin:10px 0 6px}p{color:#93a6c6;font-size:14px}
+input{width:100%;box-sizing:border-box;background:#0b1524;border:1px solid rgba(130,175,255,.14);color:#eaf1ff;border-radius:10px;padding:12px 14px;font-size:14px;margin:14px 0}
+input:focus{outline:none;border-color:#C88A4B}
+.btn{width:100%;background:linear-gradient(135deg,#f0b063,#c07f34);border:none;color:#1c1206;font-weight:700;border-radius:10px;padding:13px;font-size:15px;cursor:pointer}
+#note{margin-top:14px;font-size:13px;color:#e0a668;min-height:18px}
+</style></head><body>
+<div class="card">
+  <div class="logo">Gear<b>Up</b></div>
+  <h1>Log in to your books</h1>
+  <p>Enter your email and we'll send a one-tap login link — no password needed.</p>
+  <input id="email" type="email" placeholder="you@email.com">
+  <button class="btn" id="go">Send my login link →</button>
+  <div id="note"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script><script src="auth.js"></script>
+<script>
+const gu=GearUpAuth(GEARUP_CONFIG.SUPABASE_URL,GEARUP_CONFIG.SUPABASE_ANON_KEY);
+gu.getUser().then(u=>{ if(u) location.href='portal.html'; });
+const q=new URLSearchParams(location.search);
+if(q.get('kicked')) document.getElementById('note').textContent='Signed out — your account was opened on another device.';
+if(q.get('welcome')) document.getElementById('note').textContent='🎉 Payment received! Enter the email you paid with and we\'ll send your login link.';
+document.getElementById('go').onclick=async()=>{
+  const email=document.getElementById('email').value.trim(); if(!email) return;
+  const {error}=await gu.sendLoginLink(email);
+  document.getElementById('note').textContent = error? ('Error: '+error.message) : '✓ Check your email for the login link!';
+};
+</script></body></html>
