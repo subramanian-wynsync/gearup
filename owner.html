@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Owner</title>
+<style>
+:root{--bg:#080d18;--bg2:#0c1424;--panel:#111c30;--panel2:#15223a;--ink:#eaf1ff;--dim:#93a6c6;--line:rgba(130,175,255,.14);--gold:#C88A4B;--gold2:#e0a668;--grn:#5fd39a;--sg:"Space Grotesk","Arial",sans-serif;--mo:"JetBrains Mono","Courier New",monospace;--in:"Inter","Arial",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--in);-webkit-font-smoothing:antialiased}
+.bar{position:sticky;top:0;background:rgba(12,20,36,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:14px 22px;z-index:10}
+.bar .logo{font-family:var(--sg);font-weight:800;font-size:18px}.bar .logo b{color:var(--gold)}
+.bar .tag{font-family:var(--mo);font-size:11px;color:var(--gold2);border:1px solid var(--line);padding:4px 10px;border-radius:20px}
+.bar .sp{flex:1}
+.bar a{font-family:var(--mo);font-size:12px;color:var(--dim);cursor:pointer;text-decoration:none;margin-left:14px}
+.bar a:hover{color:var(--gold2)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 80px}
+h2{font-family:var(--sg);font-size:15px;letter-spacing:.02em;margin:32px 0 14px;color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.kpi .l{font-family:var(--mo);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.kpi .v{font-family:var(--sg);font-weight:800;font-size:26px;margin-top:8px}
+.kpi .s{font-size:12px;color:var(--dim);margin-top:4px}
+.kpi.hero .v{color:var(--gold2)}
+.books{display:grid;gap:10px}
+.brow{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:12px}
+.brow .bn{font-size:13px;color:#d7e0f0}
+.brow .track{height:12px;background:var(--panel2);border-radius:8px;overflow:hidden}
+.brow .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.brow .ct{font-family:var(--mo);font-size:13px;text-align:right;color:var(--gold2)}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th{text-align:left;font-family:var(--mo);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.chip{display:inline-block;font-family:var(--mo);font-size:10px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin:2px 3px 2px 0;color:#cdd8ea}
+.pgcell{min-width:180px}
+.pg{display:flex;align-items:center;gap:8px;margin:3px 0}
+.pg .pn{width:64px;font-size:11px;color:var(--dim)}
+.pg .pt{flex:1;height:7px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.pg .pf{height:100%;background:var(--grn)}
+.pg .pp{width:34px;text-align:right;font-family:var(--mo);font-size:11px;color:#cdd8ea}
+.muted{color:var(--dim);font-size:12px}
+#gate{display:flex;align-items:center;justify-content:center;min-height:70vh;text-align:center;color:var(--dim);font-family:var(--mo);font-size:14px;padding:20px}
+#gate a{color:var(--gold2)}
+@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div id="gate">Loading your numbers…</div>
+<div id="app" style="display:none">
+  <div class="bar"><span class="logo">Gear<b>Up</b></span><span class="tag">OWNER</span><span class="sp"></span><a id="refresh">↻ Refresh</a><a href="portal.html">Portal</a><a id="logout">Log out</a></div>
+  <div class="wrap">
+    <h2>Revenue</h2>
+    <div class="kpis" id="kpis"></div>
+    <h2>Books sold</h2>
+    <div class="books" id="books"></div>
+    <h2>Customers &amp; reading</h2>
+    <div class="tblwrap"><table id="tbl"><thead><tr><th>Customer</th><th>Books</th><th>Reading progress</th><th>Joined</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script><script src="auth.js"></script>
+<script>
+const gu=GearUpAuth(GEARUP_CONFIG.SUPABASE_URL,GEARUP_CONFIG.SUPABASE_ANON_KEY);
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const money=(n,c)=> (c==='USD'?'$':'')+ (Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + (c&&c!=='USD'?(' '+c):'');
+function dt(s){ if(!s) return '—'; const d=new Date(s); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}); }
+
+async function load(){
+  let u=null; try{ u=await gu.getUser(); }catch(e){}
+  if(!u){ document.getElementById('gate').innerHTML='Please <a href="login.html">log in</a> as the owner.'; return; }
+  const t=await gu.token();
+  const r=await fetch('/api/admin-stats',{headers:{Authorization:'Bearer '+t}});
+  if(r.status===403){ document.getElementById('gate').innerHTML='This page is for the store owner only.<br>You are signed in as '+esc(u.email)+'.'; return; }
+  if(!r.ok){ document.getElementById('gate').textContent='Could not load stats. Please try again.'; return; }
+  const d=await r.json();
+  render(d);
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+function render(d){
+  const rev=d.revenue||{}; const c=rev.currency||'USD';
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi hero"><div class="l">Net revenue</div><div class="v">${money(rev.net||0,c)}</div><div class="s">after refunds</div></div>
+    <div class="kpi"><div class="l">Gross</div><div class="v">${money(rev.gross||0,c)}</div><div class="s">${rev.refunded?('−'+money(rev.refunded,c)+' refunded'):'no refunds'}</div></div>
+    <div class="kpi"><div class="l">Paid orders</div><div class="v">${rev.count||0}</div><div class="s">successful charges</div></div>
+    <div class="kpi"><div class="l">Customers</div><div class="v">${d.customerCount||0}</div><div class="s">with a purchase</div></div>`;
+  const bc=d.bookCounts||{}, bn=d.bookNames||{}; const max=Math.max(1,...Object.values(bc));
+  document.getElementById('books').innerHTML=['biw','plastics','design','fea','cfd'].map(b=>
+    `<div class="brow"><span class="bn">${esc(bn[b]||b)}</span><div class="track"><div class="fill" style="width:${Math.round((bc[b]||0)/max*100)}%"></div></div><span class="ct">${bc[b]||0}</span></div>`).join('');
+  const rows=(d.customers||[]).map(cu=>{
+    const books=(cu.books||[]).map(b=>`<span class="chip">${esc(bn[b]||b)}</span>`).join('')||'<span class="muted">—</span>';
+    const pg=Object.keys(cu.progress||{}).length? Object.entries(cu.progress).map(([b,p])=>
+      `<div class="pg"><span class="pn">${esc((bn[b]||b).split(' ')[0])}</span><span class="pt"><span class="pf" style="width:${p.pct||0}%"></span></span><span class="pp">${p.pct||0}%</span></div>`).join('')
+      : '<span class="muted">not started</span>';
+    return `<tr><td><b>${esc(cu.name||cu.email.split('@')[0])}</b><div class="muted">${esc(cu.email)}</div></td><td>${books}</td><td class="pgcell">${pg}</td><td class="muted">${dt(cu.created)}</td></tr>`;
+  }).join('') || '<tr><td colspan="4" class="muted" style="padding:22px">No customers yet.</td></tr>';
+  document.getElementById('rows').innerHTML=rows;
+}
+document.getElementById('refresh').onclick=()=>{ document.getElementById('app').style.display='none'; document.getElementById('gate').style.display='flex'; document.getElementById('gate').textContent='Refreshing…'; load(); };
+document.getElementById('logout').onclick=()=>{ gu.signOut().then(()=>location.href='login.html'); };
+load();
+</script>
+</body></html>
