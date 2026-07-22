@@ -5,30 +5,47 @@ body{margin:0;background:#080d18;color:#eaf1ff;font-family:Inter,Arial,sans-seri
 .card{background:#0c1424;border:1px solid rgba(130,175,255,.14);border-radius:20px;padding:34px;width:100%;max-width:400px;text-align:center}
 .logo{font-family:'Space Grotesk',Arial,sans-serif;font-weight:800;font-size:22px;margin-bottom:6px}.logo b{color:#C88A4B}
 h1{font-size:20px;margin:10px 0 6px}p{color:#93a6c6;font-size:14px}
-input{width:100%;box-sizing:border-box;background:#0b1524;border:1px solid rgba(130,175,255,.14);color:#eaf1ff;border-radius:10px;padding:12px 14px;font-size:14px;margin:14px 0}
+input{width:100%;box-sizing:border-box;background:#0b1524;border:1px solid rgba(130,175,255,.14);color:#eaf1ff;border-radius:10px;padding:12px 14px;font-size:14px;margin:8px 0}
 input:focus{outline:none;border-color:#C88A4B}
-.btn{width:100%;background:linear-gradient(135deg,#f0b063,#c07f34);border:none;color:#1c1206;font-weight:700;border-radius:10px;padding:13px;font-size:15px;cursor:pointer}
-#note{margin-top:14px;font-size:13px;color:#e0a668;min-height:18px}
+.btn{width:100%;background:linear-gradient(135deg,#f0b063,#c07f34);border:none;color:#1c1206;font-weight:700;border-radius:10px;padding:13px;font-size:15px;cursor:pointer;margin-top:8px}
+.link{background:none;border:none;color:#93a6c6;font-size:13px;cursor:pointer;margin-top:16px;text-decoration:underline}
+.link:hover{color:#e0a668}
+#note{margin-top:14px;font-size:13px;color:#e0a668;min-height:18px;line-height:1.5}
 </style></head><body>
 <div class="card">
   <div class="logo">Gear<b>Up</b></div>
   <h1>Log in to your books</h1>
-  <p>Enter your email and we'll send a one-tap login link — no password needed.</p>
-  <input id="email" type="email" placeholder="you@email.com">
-  <button class="btn" id="go">Send my login link →</button>
+  <p id="sub">Enter your email and password.</p>
+  <input id="email" type="email" placeholder="you@email.com" autocomplete="email">
+  <input id="password" type="password" placeholder="Your password" autocomplete="current-password">
+  <button class="btn" id="go">Log in →</button>
   <div id="note"></div>
+  <button class="link" id="forgot">Forgot your password? Email me a login link</button>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script><script src="auth.js"></script>
 <script>
 const gu=GearUpAuth(GEARUP_CONFIG.SUPABASE_URL,GEARUP_CONFIG.SUPABASE_ANON_KEY);
+const note=document.getElementById('note');
 gu.getUser().then(u=>{ if(u) location.href='portal.html'; });
 const q=new URLSearchParams(location.search);
-if(q.get('kicked')) document.getElementById('note').textContent='Signed out — your account was opened on another device.';
-if(q.get('welcome')) document.getElementById('note').textContent='🎉 Payment received! Enter the email you paid with and we\'ll send your login link.';
+if(q.get('kicked')) note.textContent='Signed out — your account was opened on another device.';
+if(q.get('welcome')) note.textContent='🎉 Payment received! Check your email for your temporary password, then log in here.';
 document.getElementById('go').onclick=async()=>{
-  const email=document.getElementById('email').value.trim(); if(!email) return;
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  if(!email||!password){ note.textContent='Enter your email and password.'; return; }
+  note.textContent='Logging in…';
+  const {error}=await gu.sb.auth.signInWithPassword({email,password});
+  if(error){ note.textContent='Error: '+error.message; }
+  else { location.href='portal.html'; }
+};
+document.getElementById('password').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('go').click(); });
+document.getElementById('forgot').onclick=async()=>{
+  const email=document.getElementById('email').value.trim();
+  if(!email){ note.textContent='Enter your email first, then click again.'; return; }
+  note.textContent='Sending your login link…';
   const {error}=await gu.sendLoginLink(email);
-  document.getElementById('note').textContent = error? ('Error: '+error.message) : '✓ Check your email for the login link!';
+  note.textContent = error ? ('Error: '+error.message) : '✓ Login link sent — check your email. After logging in, set a new password in your profile.';
 };
 </script></body></html>
