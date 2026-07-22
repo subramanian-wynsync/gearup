@@ -28,7 +28,16 @@ function GearUpAuth(url, anonKey){
     openBookUrl: async function(book_id){
       const t=await this.token(); if(!t){ location.href='login.html'; return null; }
       const r=await fetch('/api/book-url?book='+encodeURIComponent(book_id),{headers:{Authorization:'Bearer '+t}});
-      const d=await r.json(); if(d.url) return d.url; alert(d.error||'Could not open the book'); return null;
+      const d=await r.json(); if(!d.url){ alert(d.error||'Could not open the book'); return null; }
+      // Fetch the file directly from storage and force it to render as HTML,
+      // regardless of the content-type Supabase serves it with.
+      try{
+        const res=await fetch(d.url);
+        if(!res.ok) return d.url;
+        const html=await res.text();
+        const blob=new Blob([html],{type:'text/html'});
+        return URL.createObjectURL(blob);
+      }catch(e){ return d.url; }
     }
   };
 }
