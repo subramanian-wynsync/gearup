@@ -30,7 +30,10 @@ a{color:inherit}
 .chead .k{font-family:var(--mo);font-size:12px;color:var(--gold2);letter-spacing:.1em}
 .chead h1{font-family:var(--sg);font-weight:800;font-size:27px;margin:8px 0 0;line-height:1.2}
 .topic{padding:26px 0;border-bottom:1px solid var(--line)}
-.topic h3{font-family:var(--sg);font-weight:800;font-size:20px;margin:0 0 12px;color:#fff}
+.topic h3{font-family:var(--sg);font-weight:800;font-size:20px;margin:0 0 4px;color:#fff}
+.topic .tsub{color:var(--gold2);font-size:14px;margin:0 0 12px;font-weight:600}
+.tip2{background:rgba(200,138,75,.1);border-left:3px solid var(--gold);border-radius:8px;padding:11px 14px;margin:14px 0;font-size:14px;line-height:1.6;color:#e7dcc9}
+.tip2 b{color:var(--gold2)}
 .topic p{line-height:1.7;color:#d7e0f0;margin:10px 0}
 .topic h4{font-family:var(--sg);font-size:15px;margin:18px 0 6px;color:var(--gold2)}
 .topic ul{margin:10px 0;padding-left:20px;color:#d7e0f0;line-height:1.6}
@@ -134,12 +137,15 @@ function pairs(label,lst,cls){ if(!lst||!lst.length) return ''; const rows=lst.m
   return '<div class="box"><div class="bl" style="color:'+(cls||'#7fa8ff')+'">'+label+'</div>'+rows+'</div>'; }
 function qaBlock(lst){ if(!lst||!lst.length) return ''; return '<div class="qawrap"><div class="bl">Interview Q&amp;A</div>'+lst.map(x=>'<div class="qa"><div class="q">Q · '+esc(x[0])+'</div><div class="a">'+esc(x[1])+'</div></div>').join('')+'</div>'; }
 function topicHTML(t){ let h='<article class="topic"><h3>'+esc(t.title)+'</h3>';
-  if(t.illus) h+='<div class="fig"><img src="'+t.illus+'" alt=""></div>';
+  if(t.subtitle) h+='<div class="tsub">'+esc(t.subtitle)+'</div>';
+  const img=t.illus||(t.hero&&D.images&&D.images[t.hero]);
+  if(img) h+='<div class="fig"><img src="'+img+'" alt=""></div>';
   h+=blocks(t.concept);
   (t.diagrams||[]).forEach(dg=>{ const svg=D.diagrams&&D.diagrams[dg[0]]; if(svg){ h+='<div class="dgm">'+svg+'</div>'; if(dg[1]) h+='<div class="cap">'+esc(dg[1])+'</div>'; } });
   if(t.why&&t.why.length) h+='<div class="why"><div class="bl">Why it matters</div>'+blocks(t.why)+'</div>';
   h+=pairs("Where it's used", t.usecases, '#e0a668');
   h+=pairs("Everyday intuition", t.everyday, '#7fdb9a');
+  if(t.tip) h+='<div class="tip2"><b>Engineer\'s tip — </b>'+esc(t.tip)+'</div>';
   h+=qaBlock(t.qa);
   return h+'</article>'; }
 
