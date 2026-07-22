@@ -15,27 +15,27 @@ const SEQ = [
   { key:'d2', day:2, window:5, subject:'Have you opened your first book yet? 🔧',
     skip:()=>false,
     build:()=> H('Have you opened your books yet?')+
-      `<p>Hey — it's been a couple of days since you picked up your GearUp books, and I wanted to make sure you got in okay.</p>
-       <p>If you haven't started, here's the easiest way in: log in, open any book, and try the practice quiz at the end of a chapter — the mechanic keeps you company, and it's a surprisingly good way to find your level.</p>`+
+      `<p>Hey! It's been a couple of days since you picked up your GearUp books, and I wanted to make sure you got in okay.</p>
+       <p>If you haven't started, here's the easiest way in: log in, open any book, and try the practice quiz at the end of a chapter. The mechanic keeps you company, and it's a surprisingly good way to find your level.</p>`+
       btn('Open my books →', SITE+'/login.html')+
       `<p style="color:#9fb2d4;font-size:13px">Stuck on anything at all? Just reply.</p>` },
-  { key:'d7', day:7, window:6, subject:"One week in — how are the books treating you? 📘",
+  { key:'d7', day:7, window:6, subject:"How's your first week with the books going? 📘",
     skip:()=>false,
-    build:()=> H("One week in — how's it going?")+
-      `<p>You've had the books about a week now, and I'd genuinely love to know how you're finding them — what's clicking, and what's missing.</p>
-       <p>If they're helping, a short review or even a one-line reply means a lot and helps other engineers find them. And if something isn't landing, tell me — I read every reply and use them to make the books better.</p>`+
+    build:()=> H("How's your first week going?")+
+      `<p>You've had the books about a week now, and I'd love to know how you're finding them. What's clicking, and what's missing?</p>
+       <p>If they're helping, a short review or even a one-line reply means a lot and helps other engineers find them. And if something isn't landing, tell me. I read every reply and use them to make the books better.</p>`+
       btn('Keep reading →', SITE+'/login.html') },
-  { key:'d14', day:14, window:7, subject:"Complete your GearUp set — reader's discount inside",
+  { key:'d14', day:14, window:7, subject:"Complete your GearUp set (reader's discount inside)",
     skip:(ctx)=> ctx.missing.length===0,
     build:(ctx)=> H('Ready to complete your set?')+
       `<p>Since you've been working through your GearUp books, I thought you might want the ones you don't have yet:</p>
        <ul style="color:#dbe5f5;padding-left:20px">${ctx.missing.map(b=>`<li style="margin:5px 0">${NAMES[b]}</li>`).join('')}</ul>
-       <p>As a reader, there's a discount waiting in your dashboard the moment you add another — and the more you add, the bigger it gets.</p>`+
+       <p>As a reader, there's a discount waiting in your dashboard the moment you add another, and the more you add, the bigger it gets.</p>`+
       btn('See the other books →', SITE) },
-  { key:'d30', day:30, window:12, subject:'A month with GearUp — a favour and a tip 🔧',
+  { key:'d30', day:30, window:12, subject:'A month in, and a small favour 🔧',
     skip:()=>false,
     build:()=> H('A month with GearUp 🔧')+
-      `<p>It's been about a month. If the books helped you prep — or land something — I'd love to hear the story. Just hit reply.</p>
+      `<p>It's been about a month. If the books helped you prep (or landed something!), I'd love to hear the story. Just hit reply.</p>
        <p>And if you know another engineer grinding through interviews, forwarding this along would genuinely mean the world. That's how GearUp grows.</p>`+
       btn('Back to your books →', SITE+'/login.html') },
 ];

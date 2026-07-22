@@ -29,7 +29,7 @@ function emailHTML({items, amount, currency, tempPw, isNew}){
       <div style="font-size:13px;color:#9fb2d4;margin-top:10px">Log in with these, then change your password anytime in your profile.</div>
     </div>` : `
     <div style="background:#0e1930;border:1px solid #2a3b5c;border-radius:12px;padding:18px 20px;margin:22px 0;font-size:15px;color:#dbe5f5">
-      Your new books are unlocked on your existing account — just log in as usual.
+      Your new books are unlocked on your existing account. Just log in as usual.
     </div>`;
   return `<div style="background:#080d18;padding:32px 0;font-family:Arial,Helvetica,sans-serif">
     <div style="max-width:520px;margin:0 auto;background:#0c1424;border:1px solid #22304a;border-radius:18px;overflow:hidden">
@@ -44,7 +44,7 @@ function emailHTML({items, amount, currency, tempPw, isNew}){
         <div style="text-align:center;margin:26px 0 8px">
           <a href="${SITE}/login.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:16px;text-decoration:none;padding:14px 30px;border-radius:10px">Log in &amp; start reading →</a>
         </div>
-        <p style="color:#9fb2d4;font-size:13px;line-height:1.6;margin:20px 0 6px">Once you've spent time with the books, I'd love a short review or a line of feedback — it helps other engineers find them, and helps me make the next one better. Just reply to this email.</p>
+        <p style="color:#9fb2d4;font-size:13px;line-height:1.6;margin:20px 0 6px">If anything doesn't work, just hit reply. It comes straight to me, and I'll sort it out.</p>
       </div>
       <div style="padding:16px 28px 24px;border-top:1px solid #22304a;color:#6f83a6;font-size:12px">GearUp Press · Interactive engineering books · gearup.study</div>
     </div></div>`;
