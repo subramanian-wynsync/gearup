@@ -73,7 +73,17 @@ a{color:inherit}
 .btn:hover{border-color:var(--gold)}
 .btn.gold{background:linear-gradient(135deg,#f0b063,#c07f34);color:#1c1206;border:none}
 .btn:disabled{opacity:.4;cursor:default}
-.rmascot{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;align-items:flex-end;gap:10px;max-width:340px;pointer-events:none}
+.rside{width:300px;flex:none;position:sticky;top:80px;height:fit-content;padding:22px 20px;align-self:flex-start}
+.rside .mbig{width:100%;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel),var(--bg2));box-shadow:0 22px 55px rgba(0,0,0,.45)}
+.rside .mbig img{width:100%;display:block}
+.rside .mbig.pop{animation:pp .45s}
+.rside .mmood{font-family:var(--mo);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold2);margin-top:16px}
+.rside .mspeech{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:13px 15px;font-size:14px;color:#eaf1ff;margin-top:8px;line-height:1.5;min-height:44px}
+.rside .mstat{display:flex;gap:10px;margin-top:14px}
+.rside .mstat .cell{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.rside .mstat b{font-family:var(--sg);font-size:18px;display:block}
+.rside .mstat span{font-size:10px;color:var(--dim);font-family:var(--mo)}
+.rmascot{position:fixed;right:20px;bottom:20px;z-index:60;display:none;align-items:flex-end;gap:10px;max-width:340px;pointer-events:none}
 .rmascot .bubble{background:var(--bg2);border:1px solid var(--line);border-radius:14px 14px 4px 14px;padding:10px 13px;font-size:13px;color:#eaf1ff;box-shadow:0 10px 30px rgba(0,0,0,.4);opacity:0;transform:translateY(8px);transition:.25s;max-width:250px}
 .rmascot .bubble.on{opacity:1;transform:none}
 .rmascot .face{width:66px;height:66px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);flex:none;background:var(--panel);box-shadow:0 8px 24px rgba(0,0,0,.45)}
@@ -81,6 +91,7 @@ a{color:inherit}
 .rmascot .face.pop{animation:pp .4s}
 @keyframes pp{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
 #gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-family:var(--mo);font-size:14px}
+@media(max-width:1180px){.rside{display:none}.rmascot{display:flex}}
 @media(max-width:820px){.rnav{position:fixed;left:0;top:60px;z-index:40;transform:translateX(-100%);transition:.25s}.rnav.on{transform:none}.rbar .navtog{display:block}.rcontent{padding:22px 18px 120px}.rmascot .bubble{display:none}}
 </style></head><body>
 <div id="gate">Loading your book…</div>
@@ -95,6 +106,7 @@ a{color:inherit}
   <div class="wrap">
     <aside class="rnav" id="rnav"><h4>Chapters</h4><div id="chlist"></div></aside>
     <section class="rcontent" id="content"></section>
+    <aside class="rside" id="rside"><div class="mbig"><img id="mbig-img" src="" alt="GearUp mechanic"></div><div class="mmood" id="mbig-mood">GearUp mechanic</div><div class="mspeech" id="mbig-speech">Let's get into it.</div><div class="mstat"><div class="cell"><b id="mbig-pts">0</b><span>points</span></div><div class="cell"><b id="mbig-prog">0%</b><span>complete</span></div></div></aside>
   </div>
   <div class="rmascot"><div class="bubble" id="mbubble"></div><div class="face" id="mface"></div></div>
 </div>
@@ -106,8 +118,12 @@ const P=new URLSearchParams(location.search); const BOOK=(P.get('book')||'fea').
 let D=null, gu=null, S={ch:0, points:0, done:{}, answered:{} };
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 function faceImg(m){ return MASCOT[m]||MASCOT.confident; }
-function setMascot(mood,line,hold){ const f=document.getElementById('mface'); f.innerHTML='<img src="'+faceImg(mood)+'" alt="">'; f.classList.remove('pop'); void f.offsetWidth; f.classList.add('pop');
-  const b=document.getElementById('mbubble'); if(line){ b.textContent=line; b.classList.add('on'); clearTimeout(window._mt); if(!hold) window._mt=setTimeout(()=>b.classList.remove('on'),4200); } }
+const MOODLBL={happy:"Nice work!",thinking:"Let's learn it",confident:"GearUp mechanic",focused:"Focused",determined:"Keep going"};
+function setMascot(mood,line,hold){ const f=document.getElementById('mface'); if(f){ f.innerHTML='<img src="'+faceImg(mood)+'" alt="">'; f.classList.remove('pop'); void f.offsetWidth; f.classList.add('pop'); }
+  const b=document.getElementById('mbubble'); if(b&&line){ b.textContent=line; b.classList.add('on'); clearTimeout(window._mt); if(!hold) window._mt=setTimeout(()=>b.classList.remove('on'),4200); }
+  const bi=document.getElementById('mbig-img'); if(bi){ bi.src=faceImg(mood); const w=bi.parentElement; w.classList.remove('pop'); void w.offsetWidth; w.classList.add('pop'); }
+  const bm=document.getElementById('mbig-mood'); if(bm){ bm.textContent=MOODLBL[mood]||"GearUp mechanic"; }
+  const bs=document.getElementById('mbig-speech'); if(bs&&line){ bs.textContent=line; } }
 
 function blocks(lst){ if(!lst) return ''; return lst.map(b=>{ let k='p',v=b; if(Array.isArray(b)){k=b[0];v=b[1];}
   if(k==='h') return '<h4>'+esc(v)+'</h4>';
@@ -153,7 +169,7 @@ function markAnswer(ci,qi,oi,m,silent){ const ok=oi===m.correct;
 function answer(ci,qi,oi){ if(S.answered[ci]&&S.answered[ci][qi]!=null) return; const m=D.chapters[ci].mcqs[qi];
   S.answered[ci]=S.answered[ci]||{}; S.answered[ci][qi]=oi; const ok=oi===m.correct;
   markAnswer(ci,qi,oi,m,false);
-  if(ok){ S.points+=10; document.getElementById('pts').textContent=S.points; setMascot('happy', pick(['Nice one! +10 🔧','Spot on! +10','Exactly right! +10'])); }
+  if(ok){ S.points+=10; document.getElementById('pts').textContent=S.points; var _bp=document.getElementById('mbig-pts'); if(_bp)_bp.textContent=S.points; setMascot('happy', pick(['Nice one! +10 🔧','Spot on! +10','Exactly right! +10'])); }
   else { setMascot('thinking', pick(['Close — check the explanation.','Not quite, but now you know it.','Learn it once, own it forever.'])); }
   const total=m===undefined?0:D.chapters[ci].mcqs.length; const done=Object.keys(S.answered[ci]).length;
   if(done>=total){ S.done[ci]=true; setMascot('confident','Chapter test complete — great work!'); }
@@ -161,7 +177,7 @@ function answer(ci,qi,oi){ if(S.answered[ci]&&S.answered[ci][qi]!=null) return; 
 }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function overallPct(){ const done=Object.keys(S.done).filter(k=>S.done[k]).length; return Math.round(done/D.chapters.length*100); }
-function refreshProg(){ const p=overallPct(); document.getElementById('pfill').style.width=p+'%'; document.getElementById('ppct').textContent=p+'%'; }
+function refreshProg(){ const p=overallPct(); document.getElementById('pfill').style.width=p+'%'; document.getElementById('ppct').textContent=p+'%'; const bp=document.getElementById('mbig-prog'); if(bp) bp.textContent=p+'%'; }
 async function saveProgress(){ refreshProg(); try{ if(gu&&gu.sb&&S.uid){ await gu.sb.from('progress').upsert({user_id:S.uid,book_id:BOOK,chapter:(Object.keys(S.done).filter(k=>S.done[k]).length)||1,pct:overallPct(),updated_at:new Date().toISOString()},{onConflict:'user_id,book_id'}); } }catch(e){} }
 function backToPortal(){ location.href='portal.html'; }
 
