@@ -20,7 +20,7 @@ input:focus{outline:none;border-color:#C88A4B}
   <input id="password" type="password" placeholder="Your password" autocomplete="current-password">
   <button class="btn" id="go">Log in →</button>
   <div id="note"></div>
-  <button class="link" id="forgot">Forgot your password? Email me a login link</button>
+  <button class="link" id="forgot">Forgot your password? Reset it</button>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script><script src="auth.js"></script>
@@ -31,6 +31,8 @@ gu.getUser().then(u=>{ if(u) location.href='portal.html'; });
 const q=new URLSearchParams(location.search);
 if(q.get('kicked')) note.textContent='Signed out — your account was opened on another device.';
 if(q.get('welcome')) note.textContent='🎉 Payment received! Check your email for your temporary password, then log in here.';
+if(q.get('reset')) note.textContent='Your password is set. Log in with your email and new password.';
+
 document.getElementById('go').onclick=async()=>{
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
@@ -41,11 +43,12 @@ document.getElementById('go').onclick=async()=>{
   else { location.href='portal.html'; }
 };
 document.getElementById('password').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('go').click(); });
+
 document.getElementById('forgot').onclick=async()=>{
   const email=document.getElementById('email').value.trim();
   if(!email){ note.textContent='Enter your email first, then click again.'; return; }
-  note.textContent='Sending your login link…';
-  const {error}=await gu.sendLoginLink(email);
-  note.textContent = error ? ('Error: '+error.message) : '✓ Login link sent — check your email. After logging in, set a new password in your profile.';
+  note.textContent='Sending your reset link…';
+  const {error}=await gu.sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/reset.html'});
+  note.textContent = error ? ('Error: '+error.message) : '✓ Reset link sent. Check your email, click it, and choose a new password.';
 };
 </script></body></html>
