@@ -322,6 +322,7 @@ footer .logo{justify-content:center;margin-bottom:12px}
 
 <footer><div class="wrap"><div class="logo"><svg viewBox="0 0 24 24" fill="#C88A4B"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Gear<b>Up</b></div>
   <p>Interactive engineering books by Subramanian J H. Body in White · Plastics &amp; Glazing · Automotive Design · FEA · CFD.</p>
+  <p style="margin-top:14px;font-size:13px"><a href="terms.html" style="color:#e0a668">Terms</a> &nbsp;·&nbsp; <a href="privacy.html" style="color:#e0a668">Privacy</a> &nbsp;·&nbsp; <a href="refunds.html" style="color:#e0a668">Refunds</a> &nbsp;·&nbsp; <a href="contact.html" style="color:#e0a668">Contact</a></p>
   <p style="margin-top:8px;opacity:.6">© GearUp Press. Interactive engineering books for the next generation of designers.</p></div></footer>
 
 <div class="ov" id="ov" onclick="if(event.target===this)closeOv()"><div class="modal" id="modal"></div></div>
@@ -557,4 +558,5 @@ function toast(m){const t=document.createElement('div');t.textContent=m;t.style.
 })();
 shelfHTML(); syncCart();
 </script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
 </body></html>

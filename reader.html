@@ -202,12 +202,20 @@ async function boot(){
   try{ await gu.claimSession(); }catch(e){}
   let owned=[]; try{ owned=await gu.ownedBooks(); }catch(e){}
   if(!owned.includes(BOOK)){ document.getElementById('gate').innerHTML='You don\'t own this book yet. <a style="color:#e0a668" href="portal.html">Back to portal</a>'; return; }
-  // fetch gated book data
+  // fetch gated book data — served from the device after the first download (no data, instant)
   try{
-    const t=await gu.token();
-    const r=await fetch('/api/book-data?book='+encodeURIComponent(BOOK),{headers:{Authorization:'Bearer '+t}});
-    const meta=await r.json(); if(!meta.url) throw new Error(meta.error||'no data');
-    const dr=await fetch(meta.url); D=await dr.json();
+    const wantFresh = new URLSearchParams(location.search).get('fresh')==='1';
+    let cached = wantFresh ? null : await gbCacheGet(BOOK);
+    if(cached){
+      D = cached;
+    } else {
+      document.getElementById('gate').textContent='Downloading your book…';
+      const t=await gu.token();
+      const r=await fetch('/api/book-data?book='+encodeURIComponent(BOOK),{headers:{Authorization:'Bearer '+t}});
+      const meta=await r.json(); if(!meta.url) throw new Error(meta.error||'no data');
+      const dr=await fetch(meta.url); D=await dr.json();
+      gbCacheSet(BOOK, D); // keep on the device so re-opening costs no data
+    }
   }catch(e){ document.getElementById('gate').textContent='Could not load the book. Please try again.'; return; }
   // restore progress
   try{ const prog=await gu.getProgress(); const pr=(prog||[]).find(p=>p.book_id===BOOK); if(pr){ const upto=pr.chapter||0; for(let i=0;i<upto;i++) S.done[i]=true; } }catch(e){}
@@ -217,6 +225,12 @@ async function boot(){
   setMascot('confident','Welcome back — let\'s get into it. 🔧',true);
   renderNav(); openChapter(0); refreshProg();
 }
+// --- on-device book cache (IndexedDB): download once, then re-open with no data ---
+const GB_CACHE_V=1;
+function gbIdbOpen(){return new Promise((res,rej)=>{try{const q=indexedDB.open('gearup-books',1);q.onupgradeneeded=()=>{try{q.result.createObjectStore('books');}catch(_){}};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);}catch(e){rej(e);}});}
+async function gbCacheGet(id){try{const db=await gbIdbOpen();return await new Promise((res)=>{const rq=db.transaction('books','readonly').objectStore('books').get('b:'+id);rq.onsuccess=()=>{const v=rq.result;res(v&&v._v===GB_CACHE_V?v.data:null);};rq.onerror=()=>res(null);});}catch(e){return null;}}
+async function gbCacheSet(id,data){try{const db=await gbIdbOpen();await new Promise((res)=>{const rq=db.transaction('books','readwrite').objectStore('books').put({_v:GB_CACHE_V,at:Date.now(),data:data},'b:'+id);rq.onsuccess=()=>res();rq.onerror=()=>res();});}catch(e){}}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 boot();
 </script>
 </body></html>
