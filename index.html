@@ -1,6 +1,19 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GearUp — Interactive Engineering Books</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Five interactive engineering books to launch your automotive career — Design, FEA, CFD, Body in White and Plastics.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GearUp — Interactive Engineering Books">
+<meta property="og:description" content="Five interactive engineering books to launch your automotive career.">
+<meta property="og:image" content="https://www.gearup.study/og-image.jpg">
+<meta property="og:url" content="https://www.gearup.study/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GearUp — Interactive Engineering Books">
+<meta name="twitter:description" content="Five interactive engineering books to launch your automotive career.">
+<meta name="twitter:image" content="https://www.gearup.study/og-image.jpg">
 <style>
 :root{--bg:#080d18;--bg2:#0c1424;--panel:#111c30;--ink:#eaf1ff;--dim:#93a6c6;--line:rgba(130,175,255,.14);
  --red:#E8552D;--teal:#0FA69A;--blue:#2F6FED;--amber:#F2A900;--gold:#C88A4B;
@@ -66,11 +79,9 @@ section{padding:80px 0;position:relative;z-index:1}
 .shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
 .book{background:rgba(17,28,48,.92);backdrop-filter:blur(4px);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.18s}
 .book:hover{transform:translateY(-4px);border-color:#3a4c6e;box-shadow:0 20px 50px rgba(0,0,0,.4)}
-.book .cov{height:170px;padding:20px;position:relative;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
-.book .cov .rn{position:absolute;top:14px;right:16px;font-family:var(--mo);font-size:40px;font-weight:800;opacity:.18;color:#fff}
-.book .cov .tier{font-family:var(--mo);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.14);width:max-content;font-weight:700}
-.book .cov .ct{font-family:var(--sg);font-weight:800;font-size:23px;line-height:1.06;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
-.book .cov .cr{width:38px;height:5px;border-radius:3px;background:#fff;opacity:.85;margin-top:8px}
+.book .cov{position:relative;aspect-ratio:2/3;overflow:hidden;background:#0b1220;border-bottom:1px solid var(--line)}
+.book .cov img{width:100%;height:100%;object-fit:cover;display:block}
+.book .cov .tier{position:absolute;top:13px;left:13px;font-family:var(--mo);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:20px;background:rgba(8,13,24,.72);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.16);width:max-content;font-weight:700}
 .book .bd{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
 .book .bd h3{font-family:var(--sg);font-weight:700;font-size:17px;line-height:1.15}
 .book .bd .sb{font-size:13.5px;color:var(--dim);margin:5px 0 9px}
@@ -164,7 +175,8 @@ footer .logo{justify-content:center;margin-bottom:12px}
 .cart-hd .cx:hover{color:#eaf1ff}
 .cart-items{flex:1;overflow:auto;padding:6px 22px}
 .cart-it{display:flex;gap:13px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
-.cart-it .chip{width:44px;height:56px;border-radius:7px;flex:none;display:flex;align-items:flex-end;justify-content:center;font-family:var(--mo);font-size:11px;font-weight:700;color:#fff;padding-bottom:5px}
+.cart-it .chip{width:44px;height:56px;border-radius:7px;flex:none;overflow:hidden;background:#0b1220;border:1px solid var(--line)}
+.cart-it .chip img{width:100%;height:100%;object-fit:cover;display:block}
 .cart-it .info{flex:1;min-width:0}
 .cart-it .t{font-weight:700;font-size:14px;line-height:1.3}
 .cart-it .tier{font-family:var(--mo);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
@@ -182,6 +194,25 @@ footer .logo{justify-content:center;margin-bottom:12px}
 .cart-empty .ce-ic{font-size:40px;opacity:.5}
 .cart-empty h4{font-family:var(--sg);color:#eaf1ff;margin:14px 0 6px;font-size:17px}
 @media(max-width:640px){nav .links{display:none}.bundle .r{text-align:left}.pv-stage,.pv-nav,.mfoot,.modal .mhead{padding-left:18px;padding-right:18px}}
+.author-sec{background:linear-gradient(180deg,var(--bg),var(--bg2))}
+.au-grid{display:grid;grid-template-columns:300px 1fr;gap:38px;align-items:start;max-width:1010px;margin:0 auto}
+.au-card{background:rgba(17,28,48,.86);backdrop-filter:blur(4px);border:1px solid var(--line);border-radius:20px;padding:30px 26px;text-align:center;position:sticky;top:92px}
+.au-ava{width:100%;aspect-ratio:4/5;border-radius:16px;margin:0 auto 18px;overflow:hidden;background:linear-gradient(150deg,#1a2a44,#0c1424);box-shadow:0 16px 40px rgba(0,0,0,.42)}
+.au-ava img{width:100%;height:100%;object-fit:cover;display:block}
+.au-name{font-family:var(--sg);font-weight:800;font-size:22px;color:#fff}
+.au-role{font-family:var(--mo);font-size:11px;color:var(--gold);letter-spacing:.09em;text-transform:uppercase;margin-top:7px}
+.au-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px}
+.au-tags span{font-family:var(--mo);font-size:10.5px;color:#cdd8ea;background:rgba(130,175,255,.09);border:1px solid var(--line);border-radius:20px;padding:5px 11px}
+.au-msg{font-size:16.5px;line-height:1.72;color:#d3ddef}
+.au-msg p{margin:0 0 16px}
+.au-msg .lead{font-family:var(--sg);font-weight:600;font-size:22px;line-height:1.5;color:#fff;margin-bottom:22px}
+.au-msg strong{color:#fff;font-weight:600}
+.au-sign{font-family:var(--sg);font-weight:700;font-style:italic;font-size:27px;color:#fff;margin-top:28px}
+.au-sub{font-family:var(--mo);font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.7}
+@media(max-width:760px){.au-grid{grid-template-columns:1fr;gap:24px}.au-card{position:static}.au-msg{font-size:16px}}
+.hero .fan{position:absolute;right:-60px;top:54%;transform:translateY(-50%);width:50%;max-width:700px;z-index:2;pointer-events:none;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
+@media(max-width:1100px){.hero .fan{opacity:.5;right:-140px}}
+@media(max-width:900px){.hero .fan{display:none}}
 </style></head><body>
 
 <div id="tools"><div class="tool" style="left:31.8%;top:26.0vh;width:51px;height:51px;opacity:0.11;--d:7.6s;--r:24.7s;--rd:;animation-delay:1.3s"><svg fill="#93a6c6" stroke="#93a6c6" viewBox="0 0 64 64"><path d="M50 6a12 12 0 00-15.6 15.6L10 46l8 8 24.4-24.4A12 12 0 0058 14l-7 7-7-2-2-7z"/></svg></div>
@@ -207,12 +238,13 @@ footer .logo{justify-content:center;margin-bottom:12px}
 
 <nav><div class="wrap in">
   <a href="#top" class="logo"><svg viewBox="0 0 24 24" fill="#C88A4B"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Gear<b>Up</b></a>
-  <div class="links"><a href="#books">Books</a><a href="#how">How it works</a><a href="#bundle">Pricing</a></div>
+  <div class="links"><a href="#books">Books</a><a href="#how">How it works</a><a href="#author">Author</a><a href="#bundle">Pricing</a></div>
   <div class="right"><span class="cartpill" id="cartpill" onclick="openCart()">🛒 <span id="cartn">0</span></span><button class="btn gold sm" onclick="scrollTo2('books')">Explore the library</button></div>
 </div></nav>
 
 <header class="hero" id="top">
   <canvas id="flow"></canvas><div class="veil"></div>
+  <img class="fan" src="fan_web.png" alt="The GearUp book series" loading="eager">
   <div class="wrap"><div class="in">
     <div class="kick">GearUp · Interactive engineering books</div>
     <h1>Engineer your way <span class="hl">in.</span></h1>
@@ -263,6 +295,31 @@ footer .logo{justify-content:center;margin-bottom:12px}
   </div>
 </div></section>
 
+<section id="author" class="author-sec"><div class="wrap">
+  <div class="sec-h"><div class="k">From the author</div><h2>Eighteen years on the factory floor, written down.</h2></div>
+  <div class="au-grid">
+    <div class="au-card">
+      <div class="au-ava"><img src="covers/sjh.jpg" alt="Subramanian J H"></div>
+      <div class="au-name">Subramanian J H</div>
+      <div class="au-role">Mechanical Engineer</div>
+      <div class="au-tags">
+        <span>18+ years</span><span>Nissan</span><span>Mercedes-Benz</span><span>Scania</span>
+        <span>BIW &amp; Plastics</span><span>100+ plants visited</span>
+      </div>
+    </div>
+    <div class="au-msg">
+      <p class="lead">These books are not another stack of theory. They are more than eighteen years spent inside real design offices and real factories, written down for you.</p>
+      <p>I am a mechanical engineer. For about ten years I worked in passenger cars, and for more than seven years in heavy vehicles, as a <strong>design engineer, a development engineer, and a supplier quality manager</strong> for Nissan, Mercedes-Benz, and Scania.</p>
+      <p>As a design engineer at Nissan and Mercedes-Benz, I designed the body-in-white parts you touch every day without thinking about them: hoods, fenders, doors, and roofs. That work ran from compact cars like the Nissan Kicks all the way to the latest Mercedes-Benz GLC. For Scania trucks I moved into interior plastics, both thermoset and thermoplastic, designing roof shells, side walls, and back panels.</p>
+      <p>Along the way I sat with more than a hundred tier one and tier two manufacturers and watched their lines run shift after shift: injection molding, blow molding, thermoforming, stamping, casting, forging, and deep drawing. I did this across Japan, India, Germany, Sweden, Poland, the Czech Republic, Austria, and Indonesia, inside plants like Renault-Nissan in Chennai, Mercedes-Benz in Pune and Sindelfingen, and Scania in Södertälje and Oskarshamn.</p>
+      <p>Here is what that means for you. Read the <strong>Body in White</strong> book and you will not only understand a car body, you will be able to design sheet metal components for any product and any company. Read the <strong>plastics</strong> book and you become a plastics engineer who can design polymer parts far beyond a car. If you are on the plastics side and want to move into body engineering, this set takes you there, and it works just as well the other way around. And when it is time to face a technical interview, the <strong>Design, FEA, and CFD</strong> books walk you through the questions you are most likely to be asked, from the basics right up to expert level.</p>
+      <p>If you are a final year mechanical or automobile engineer, or you are trying to break into the automotive world, this is the head start I wish someone had handed me on my first day. Open the first book. Your career in cars starts here.</p>
+      <div class="au-sign">Subramanian J H</div>
+      <div class="au-sub">Mechanical Engineer · 18+ years in passenger cars and heavy vehicles · Nissan · Mercedes-Benz · Scania</div>
+    </div>
+  </div>
+</div></section>
+
 <footer><div class="wrap"><div class="logo"><svg viewBox="0 0 24 24" fill="#C88A4B"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Gear<b>Up</b></div>
   <p>Interactive engineering books by Subramanian J H. Body in White · Plastics &amp; Glazing · Automotive Design · FEA · CFD.</p>
   <p style="margin-top:8px;opacity:.6">© GearUp Press. Interactive engineering books for the next generation of designers.</p></div></footer>
@@ -286,10 +343,8 @@ function scrollTo2(id){document.getElementById(id).scrollIntoView({behavior:'smo
 function shelfHTML(){
   document.getElementById('shelf').innerHTML=D.books.map(b=>`
    <div class="book">
-     <div class="cov" style="background:linear-gradient(150deg,${b.acc}33,#0b1220)">
-       <div class="rn">${b.order}</div>
-       <div class="tier" style="color:${b.acc2}">${b.tier}</div>
-       <div><div class="ct">${esc(b.cov)}</div><div class="cr" style="background:${b.acc}"></div></div>
+     <div class="cov">
+       <img src="covers/${b.id}.jpg" alt="${esc(b.title)} cover" loading="lazy">
      </div>
      <div class="bd">
        <h3>${esc(b.title)}</h3><div class="sb">${esc(b.sub)}</div><div class="mt">${esc(b.meta)}</div>
@@ -308,7 +363,7 @@ function openPreview(id){
   const m=document.getElementById('modal');
   m.innerHTML=`<span class="x" onclick="closeOv()">×</span>
     <div class="mhead" style="border-top:4px solid ${b.acc};border-radius:20px 20px 0 0">
-      <div class="mtier" style="color:${b.acc2}">${b.tier} · Book ${b.order} · free preview</div>
+      <div class="mtier" style="color:${b.acc2}">${b.tier} · free preview</div>
       <div class="mtitle">${esc(b.title)}</div><div class="msub">${esc(b.sub)}</div></div>
     <div class="pv-stage"><div class="pv-slide" id="pv-slide"></div></div>
     <div class="pv-nav">
@@ -395,7 +450,7 @@ function renderCart(){
   const {sum,total}=cartTotal(); const n=CART.size;
   const items=[...CART].map(id=>{const b=D.books.find(x=>x.id===id);
     return `<div class="cart-it">
-      <div class="chip" style="background:linear-gradient(150deg,${b.acc},${b.acc}99)">${b.order}</div>
+      <div class="chip"><img src="covers/${b.id}.jpg" alt=""></div>
       <div class="info"><div class="t">${esc(b.title)}</div><div class="tier" style="color:${b.acc2}">${esc(b.tier)}</div><div class="p">${money(b.price)}</div></div>
       <button class="rm" title="Remove" onclick="removeCart('${b.id}')">×</button></div>`;}).join('');
   const saveRow= total<sum? `<div class="cart-row save"><span>You save${n>=5?' (full library)':''}</span><span>− ${money(sum-total)}</span></div>`:'';

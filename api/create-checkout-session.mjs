@@ -11,6 +11,8 @@ const CAT = {
 };
 const ALL = ['biw','plastics','design','fea','cfd'];
 const BUNDLE_PRICE = 79;
+// Public cover art shown on the Stripe checkout line items (canonical www domain).
+const IMG_BASE = 'https://www.gearup.study/covers';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
       price_data: {
         currency: 'usd',
         unit_amount: CAT[id].price * 100,
-        product_data: { name: CAT[id].name },
+        product_data: { name: CAT[id].name, images: [`${IMG_BASE}/${id}.jpg`] },
       },
     }));
 
