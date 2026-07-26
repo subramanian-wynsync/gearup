@@ -1,5 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp Reader</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{--bg:#080d18;--bg2:#0c1424;--panel:#111c30;--panel2:#15223a;--ink:#eaf1ff;--dim:#93a6c6;--line:rgba(130,175,255,.14);--gold:#C88A4B;--gold2:#e0a668;--sg:"Space Grotesk","Arial",sans-serif;--mo:"JetBrains Mono","Courier New",monospace;--in:"Inter","Arial",sans-serif}
 *{box-sizing:border-box}
@@ -209,7 +212,7 @@ async function boot(){
     if(cached){
       D = cached;
     } else {
-      document.getElementById('gate').textContent='Downloading your book…';
+      document.getElementById('gate').textContent='Loading your book…';
       const t=await gu.token();
       const r=await fetch('/api/book-data?book='+encodeURIComponent(BOOK),{headers:{Authorization:'Bearer '+t}});
       const meta=await r.json(); if(!meta.url) throw new Error(meta.error||'no data');
