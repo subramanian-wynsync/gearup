@@ -213,6 +213,19 @@ footer .logo{justify-content:center;margin-bottom:12px}
 .hero .fan{position:absolute;right:-60px;top:54%;transform:translateY(-50%);width:50%;max-width:700px;z-index:2;pointer-events:none;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
 @media(max-width:1100px){.hero .fan{opacity:.5;right:-140px}}
 @media(max-width:900px){.hero .fan{display:none}}
+.lead-sec{background:linear-gradient(180deg,var(--bg2),var(--bg))}
+.lead-card{display:grid;grid-template-columns:1.2fr 1fr;gap:34px;align-items:center;background:rgba(17,28,48,.9);border:1px solid rgba(200,138,75,.35);border-radius:20px;padding:36px 38px}
+.lead-card .k{font-family:var(--mo);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.lead-card h2{font-family:var(--sg);font-weight:800;font-size:clamp(22px,3vw,30px);line-height:1.15;margin:10px 0 10px}
+.lead-card p{color:#c3d1e8;font-size:14.5px;line-height:1.6}
+.lm-form input[type=email]{width:100%;box-sizing:border-box;background:#0b1524;border:1px solid rgba(130,175,255,.2);color:#eaf1ff;border-radius:10px;padding:13px 15px;font-size:14.5px}
+.lm-form input[type=email]:focus{outline:none;border-color:var(--gold)}
+.lm-consent{display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;color:#93a6c6;line-height:1.5;text-align:left}
+.lm-consent input{margin-top:2px}
+.lm-consent a{color:#e0a668}
+.lm-form .btn{width:100%}
+#lm-note{margin-top:10px;font-size:13px;color:#e0a668;min-height:18px}
+@media(max-width:760px){.lead-card{grid-template-columns:1fr;gap:18px;padding:26px 22px}}
 </style></head><body>
 
 <div id="tools"><div class="tool" style="left:31.8%;top:26.0vh;width:51px;height:51px;opacity:0.11;--d:7.6s;--r:24.7s;--rd:;animation-delay:1.3s"><svg fill="#93a6c6" stroke="#93a6c6" viewBox="0 0 64 64"><path d="M50 6a12 12 0 00-15.6 15.6L10 46l8 8 24.4-24.4A12 12 0 0058 14l-7 7-7-2-2-7z"/></svg></div>
@@ -292,6 +305,22 @@ footer .logo{justify-content:center;margin-bottom:12px}
     <div class="step"><div class="n"></div><h3>Pay securely</h3><p>Fast, secure card checkout powered by Stripe. Prices in USD &amp; EUR.</p></div>
     <div class="step"><div class="n"></div><h3>Get instant access</h3><p>An email confirms your order and your personal login — no waiting.</p></div>
     <div class="step"><div class="n"></div><h3>Learn interactively</h3><p>Log in to your dashboard, open a book, and study — progress saved as you go.</p></div>
+  </div>
+</div></section>
+
+<section id="freebie" class="lead-sec"><div class="wrap">
+  <div class="lead-card">
+    <div>
+      <div class="k">Free starter pack</div>
+      <h2>The 20 most-asked engineering interview questions, answered.</h2>
+      <p>My pick of the questions interviewers actually ask across Design, Body in White, Plastics, FEA and CFD, with crisp answers that show you understand the idea. Straight to your inbox, free.</p>
+    </div>
+    <div class="lm-form">
+      <input id="lm-email" type="email" placeholder="you@email.com" autocomplete="email">
+      <label class="lm-consent"><input type="checkbox" id="lm-ok"> <span>Send me the starter pack and occasional GearUp updates. Unsubscribe anytime. See the <a href="privacy.html">Privacy Policy</a>.</span></label>
+      <button class="btn gold" id="lm-go" onclick="lmSubmit()">Send me the free pack →</button>
+      <div id="lm-note"></div>
+    </div>
   </div>
 </div></section>
 
@@ -558,5 +587,20 @@ function toast(m){const t=document.createElement('div');t.textContent=m;t.style.
 })();
 shelfHTML(); syncCart();
 </script>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+<script>
+async function lmSubmit(){
+  var note=document.getElementById('lm-note'), btn=document.getElementById('lm-go');
+  var email=document.getElementById('lm-email').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ note.textContent='Please enter a valid email address.'; return; }
+  if(!document.getElementById('lm-ok').checked){ note.textContent='Please tick the box so we may email you the pack.'; return; }
+  btn.disabled=true; note.textContent='Sending your pack…';
+  try{
+    var r=await fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})});
+    var d=await r.json();
+    if(r.ok&&d.ok){ note.textContent='✓ Sent! Check your inbox (and spam, just in case).'; }
+    else { note.textContent=d.error||'Something went wrong, please try again.'; btn.disabled=false; }
+  }catch(e){ note.textContent='Network hiccup, please try again.'; btn.disabled=false; }
+}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
 </body></html>
