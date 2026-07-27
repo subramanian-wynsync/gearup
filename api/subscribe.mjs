@@ -69,6 +69,9 @@ function packHTML(unsubUrl){
       body += `<p style="margin:10px 0 2px"><b style="color:#fff">${q}</b></p><p style="margin:0 0 8px;color:#c3d1e8">${a}</p>`;
     });
   }
+  body += `<h2 style="font-size:16px;color:#e0a668;margin:26px 0 6px">Your free demo access</h2>
+  <p>Reading answers is one thing. The GearUp books are interactive: quizzes that score you as you read, a mechanic who reacts to your answers, progress that saves. Try the real reader now, no login needed:</p>
+  <div style="text-align:center;margin:18px 0 6px"><a href="${SITE}/demo.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Open the free demos →</a></div>`;
   body += `<p style="margin-top:22px">Every one of these has a full chapter behind it in the GearUp books, with worked examples, figures and 4,000+ interview questions across the five volumes. You can try a live preview free on the site.</p>
   <div style="text-align:center;margin:24px 0 8px"><a href="${SITE}" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Explore the 5 books →</a></div>
   <p style="color:#9fb2d4;font-size:13px">Questions about anything here? Just hit reply, it comes straight to me.</p>`;

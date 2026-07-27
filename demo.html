@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Free Demo</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+body{background:#080d18;color:#eaf1ff;font-family:Inter,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.bar{position:sticky;top:0;background:rgba(12,20,36,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(130,175,255,.14);padding:14px 22px;display:flex;align-items:center;gap:10px;z-index:5}
+.logo{font-family:"Space Grotesk";font-weight:800;font-size:19px}.logo b{color:#F2A900}
+.bar .sp{flex:1}
+.bar a{font-family:"JetBrains Mono",monospace;font-size:12px;color:#93a6c6;text-decoration:none}
+.bar a:hover{color:#e0a668}
+.wrap{max-width:1080px;margin:0 auto;padding:44px 22px 90px}
+.k{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#F2A900;text-align:center}
+h1{font-family:"Space Grotesk";font-weight:800;font-size:clamp(28px,4.6vw,42px);text-align:center;margin:12px 0 8px;line-height:1.1}
+.sub{color:#93a6c6;text-align:center;max-width:620px;margin:0 auto 38px;font-size:15px;line-height:1.65}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.card{background:#111c30;border:1px solid rgba(130,175,255,.14);border-radius:16px;overflow:hidden;transition:.18s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);border-color:rgba(200,138,75,.5)}
+.card img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.card .bd{padding:13px 14px 15px;display:flex;flex-direction:column;gap:9px;flex:1}
+.card .t{font-family:"Space Grotesk";font-weight:700;font-size:13.5px;line-height:1.2;flex:1}
+.card a{display:block;text-align:center;background:linear-gradient(135deg,#f0b063,#c07f34);color:#1c1206;font-weight:700;font-size:13px;border-radius:9px;padding:10px;text-decoration:none}
+.note{margin-top:34px;text-align:center;color:#93a6c6;font-size:13.5px;line-height:1.7}
+.note a{color:#e0a668;text-decoration:none}
+</style></head><body>
+<div class="bar"><span class="logo">Gear<b>Up</b></span><span class="sp"></span><a href="/">← Back to gearup.study</a></div>
+<div class="wrap">
+  <div class="k">Free demo · No login needed</div>
+  <h1>Open the books. Feel how they teach.</h1>
+  <p class="sub">Every demo opens the real interactive reader: study the first topics, take the quiz, watch the mechanic react and your score climb. The full books carry 129 chapters and 4,000+ questions between them.</p>
+  <div class="grid">
+    <div class="card"><img src="covers/design.jpg" alt=""><div class="bd"><div class="t">Cracking the Automotive Design Interview</div><a href="reader.html?book=design&demo=1">Open free demo →</a></div></div>
+    <div class="card"><img src="covers/fea.jpg" alt=""><div class="bd"><div class="t">Cracking the FEA &amp; Simulation Interview</div><a href="reader.html?book=fea&demo=1">Open free demo →</a></div></div>
+    <div class="card"><img src="covers/cfd.jpg" alt=""><div class="bd"><div class="t">The Complete CFD Engineer</div><a href="reader.html?book=cfd&demo=1">Open free demo →</a></div></div>
+    <div class="card"><img src="covers/biw.jpg" alt=""><div class="bd"><div class="t">Body in White</div><a href="reader.html?book=biw&demo=1">Open free demo →</a></div></div>
+    <div class="card"><img src="covers/plastics.jpg" alt=""><div class="bd"><div class="t">Automotive Plastics &amp; Glazing</div><a href="reader.html?book=plastics&demo=1">Open free demo →</a></div></div>
+  </div>
+  <p class="note">Like what you feel? <a href="/#books">Get the full books</a> — one at a time, or all five for $79 with lifetime access.</p>
+</div>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body></html>

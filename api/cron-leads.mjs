@@ -23,8 +23,8 @@ const STEPS = [
     subject: 'Did the 20 questions help? Here is the next step 🔧',
     build: () => H('How did the 20 questions land?') +
       `<p>A couple of days ago you grabbed my starter pack. If you worked through it, you already know the pattern: interviewers do not want definitions, they want to hear that you understand the idea behind them.</p>
-       <p>That is exactly how I wrote the GearUp books. Each of those 20 questions has a full chapter behind it, with figures, worked examples and practice quizzes that keep score as you read. You can open a live preview on the site right now, no login and no payment, and see how the books feel.</p>` +
-      btn('Try a live preview →', SITE) +
+       <p>That is exactly how I wrote the GearUp books. Each of those 20 questions has a full chapter behind it, with figures, worked examples and practice quizzes that keep score as you read. You can open the free demo right now, no login and no payment: read the first topics in the real reader, take the quiz, and watch the mechanic react.</p>` +
+      btn('Open the free demos →', SITE + '/demo.html') +
       `<p style="color:#9fb2d4;font-size:13px">Stuck on one of the 20? Reply with the question and I will answer it personally.</p>` },
   { flag: 'd6_sent', day: 6, maxDay: 14,
     subject: 'From 20 questions to 4,000: how readers prepare with GearUp 📘',
