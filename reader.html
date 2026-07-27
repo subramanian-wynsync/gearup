@@ -193,7 +193,7 @@ function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function overallPct(){ const done=Object.keys(S.done).filter(k=>S.done[k]).length; return Math.round(done/D.chapters.length*100); }
 function refreshProg(){ const p=overallPct(); document.getElementById('pfill').style.width=p+'%'; document.getElementById('ppct').textContent=p+'%'; const bp=document.getElementById('mbig-prog'); if(bp) bp.textContent=p+'%'; }
 async function saveProgress(){ refreshProg(); try{ if(gu&&gu.sb&&S.uid){ await gu.sb.from('progress').upsert({user_id:S.uid,book_id:BOOK,chapter:(Object.keys(S.done).filter(k=>S.done[k]).length)||1,pct:overallPct(),updated_at:new Date().toISOString()},{onConflict:'user_id,book_id'}); } }catch(e){} }
-function backToPortal(){ location.href=DEMO?'/':'portal.html'; }
+function backToPortal(){ location.href=DEMO?'demo.html':'portal.html'; }
 
 async function boot(){
   if(DEMO){
@@ -203,7 +203,11 @@ async function boot(){
     document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block';
     document.getElementById('mface').innerHTML='<img src="'+faceImg('confident')+'" alt="">';
     setMascot('confident','Welcome to the free demo — try the quiz! 🔧',true);
-    document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(12,20,36,.97);border-top:1px solid rgba(200,138,75,.45);padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap"><span style="color:#c3d1e8;font-size:13px">You are reading the <b style="color:#e0a668">free demo</b>. The full set has 129 chapters and 4,000+ questions.</span><a href="/#books" style="background:linear-gradient(135deg,#f0b063,#c07f34);color:#1c1206;font-weight:700;border-radius:9px;padding:9px 16px;text-decoration:none;font-size:13px;white-space:nowrap">Get the full books →</a></div>');
+    const _bk=document.querySelector('[onclick*="backToPortal"]'); if(_bk) _bk.textContent='← All demos';
+    const _DB=[['design','Design'],['fea','FEA'],['cfd','CFD'],['biw','BIW'],['plastics','Plastics']];
+    const _sw=_DB.map(function(x){return x[0]===BOOK?'<b style="color:#e0a668">'+x[1]+'</b>':'<a href="reader.html?book='+x[0]+'&demo=1" style="color:#9fb2d4;text-decoration:underline">'+x[1]+'</a>';}).join(' &nbsp;·&nbsp; ');
+    document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(12,20,36,.97);border-top:1px solid rgba(200,138,75,.45);padding:9px 14px;display:flex;gap:8px 18px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center"><span style="color:#c3d1e8;font-size:12.5px">Free demo · try another book: '+_sw+'</span><a href="/#books" style="background:linear-gradient(135deg,#f0b063,#c07f34);color:#1c1206;font-weight:700;border-radius:9px;padding:8px 15px;text-decoration:none;font-size:12.5px;white-space:nowrap">Get the full books →</a></div>');
+    setTimeout(function(){ const _bar=document.body.lastElementChild; const _rc=document.querySelector('.rcontent'); if(_rc&&_bar) _rc.style.paddingBottom=(_bar.offsetHeight+18)+'px'; },50);
     renderNav(); openChapter(0); refreshProg(); return;
   }
   gu = GearUpAuth(GEARUP_CONFIG.SUPABASE_URL, GEARUP_CONFIG.SUPABASE_ANON_KEY);
