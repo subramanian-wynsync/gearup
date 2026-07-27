@@ -233,4 +233,5 @@ async function gbCacheSet(id,data){try{const db=await gbIdbOpen();await new Prom
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 boot();
 </script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body></html>

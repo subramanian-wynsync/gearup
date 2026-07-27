@@ -54,4 +54,5 @@ document.getElementById('forgot').onclick=async()=>{
   const {error}=await gu.sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+'/reset.html'});
   note.textContent = error ? ('Error: '+error.message) : '✓ Reset link sent. Check your email, click it, and choose a new password.';
 };
-</script></body></html>
+</script><script defer src="/_vercel/insights/script.js"></script>
+</body></html>
