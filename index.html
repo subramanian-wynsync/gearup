@@ -213,19 +213,6 @@ footer .logo{justify-content:center;margin-bottom:12px}
 .hero .fan{position:absolute;right:-60px;top:54%;transform:translateY(-50%);width:50%;max-width:700px;z-index:2;pointer-events:none;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
 @media(max-width:1100px){.hero .fan{opacity:.5;right:-140px}}
 @media(max-width:900px){.hero .fan{display:none}}
-.lead-sec{background:linear-gradient(180deg,var(--bg2),var(--bg))}
-.lead-card{display:grid;grid-template-columns:1.2fr 1fr;gap:34px;align-items:center;background:rgba(17,28,48,.9);border:1px solid rgba(200,138,75,.35);border-radius:20px;padding:36px 38px}
-.lead-card .k{font-family:var(--mo);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
-.lead-card h2{font-family:var(--sg);font-weight:800;font-size:clamp(22px,3vw,30px);line-height:1.15;margin:10px 0 10px}
-.lead-card p{color:#c3d1e8;font-size:14.5px;line-height:1.6}
-.lm-form input[type=email]{width:100%;box-sizing:border-box;background:#0b1524;border:1px solid rgba(130,175,255,.2);color:#eaf1ff;border-radius:10px;padding:13px 15px;font-size:14.5px}
-.lm-form input[type=email]:focus{outline:none;border-color:var(--gold)}
-.lm-consent{display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;color:#93a6c6;line-height:1.5;text-align:left}
-.lm-consent input{margin-top:2px}
-.lm-consent a{color:#e0a668}
-.lm-form .btn{width:100%}
-#lm-note{margin-top:10px;font-size:13px;color:#e0a668;min-height:18px}
-@media(max-width:760px){.lead-card{grid-template-columns:1fr;gap:18px;padding:26px 22px}}
 </style></head><body>
 
 <div id="tools"><div class="tool" style="left:31.8%;top:26.0vh;width:51px;height:51px;opacity:0.11;--d:7.6s;--r:24.7s;--rd:;animation-delay:1.3s"><svg fill="#93a6c6" stroke="#93a6c6" viewBox="0 0 64 64"><path d="M50 6a12 12 0 00-15.6 15.6L10 46l8 8 24.4-24.4A12 12 0 0058 14l-7 7-7-2-2-7z"/></svg></div>
@@ -251,7 +238,7 @@ footer .logo{justify-content:center;margin-bottom:12px}
 
 <nav><div class="wrap in">
   <a href="#top" class="logo"><svg viewBox="0 0 24 24" fill="#C88A4B"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Gear<b>Up</b></a>
-  <div class="links"><a href="#books">Books</a><a href="#freebie">Free pack</a><a href="#how">How it works</a><a href="#author">Author</a><a href="#bundle">Pricing</a></div>
+  <div class="links"><a href="#books">Books</a><a href="#coach">Interview Coach</a><a href="#how">How it works</a><a href="#author">Author</a><a href="#bundle">Pricing</a></div>
   <div class="right"><span class="cartpill" id="cartpill" onclick="openCart()">🛒 <span id="cartn">0</span></span><button class="btn gold sm" onclick="scrollTo2('books')">Explore the library</button></div>
 </div></nav>
 
@@ -271,24 +258,6 @@ footer .logo{justify-content:center;margin-bottom:12px}
     </div>
   </div></div>
 </header>
-
-<section id="freebie" class="lead-sec"><div class="wrap">
-  <div class="lead-card">
-    <div>
-      <div class="k">Free starter pack</div>
-      <h2>The 20 most-asked engineering interview questions, answered.</h2>
-      <p>My pick of the questions interviewers actually ask across Design, Body in White, Plastics, FEA and CFD, with crisp answers, straight to your inbox. Plus instant demo access to all five interactive books, free.</p>
-    </div>
-    <div class="lm-form">
-      <input id="lm-email" type="email" placeholder="you@email.com" autocomplete="email">
-      <label class="lm-consent"><input type="checkbox" id="lm-ok"> <span>Send me the starter pack and occasional GearUp updates. Unsubscribe anytime. See the <a href="privacy.html">Privacy Policy</a>.</span></label>
-      <button class="btn gold" id="lm-go" onclick="lmSubmit()">Send me the free pack →</button>
-      <div id="lm-note"></div>
-    </div>
-  </div>
-</div></section>
-
-
 
 <section>
   <div class="wrap">
@@ -315,6 +284,45 @@ footer .logo{justify-content:center;margin-bottom:12px}
   <div class="r"><div class="save">You save $36 · €33</div><div class="bp"><s>$115 · €106</s>$79 · €73</div>
     <button class="btn gold" style="font-size:16px;padding:15px 30px" onclick="buyBundle()">Get all 5 — $79</button></div>
 </div></div></section>
+
+<section id="coach" style="background:linear-gradient(180deg,rgba(17,28,48,.4),transparent)">
+  <div class="wrap">
+    <div class="sec-h"><div class="k">New — beyond the books</div><h2>Your AI interview coach. Built by these books.</h2><p>Mock interviews trained specifically for <b style="color:#fff">mechanical &amp; automotive engineers</b> — the questions real OEM and Tier-1 panels ask, with feedback that points to the exact chapter to fix.</p></div>
+    <div style="max-width:920px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:22px" class="coach-g">
+      <div style="background:rgba(17,28,48,.86);border:1px solid var(--line);border-radius:18px;padding:28px">
+        <div style="font-family:var(--mo);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase">GearUp Interview Coach</div>
+        <div style="font-family:var(--sg);font-weight:800;font-size:30px;margin:10px 0 2px">$5.99<span style="font-size:15px;color:var(--dim);font-weight:600"> / month · cancel anytime</span></div>
+        <ul style="margin:14px 0 6px;padding-left:20px;color:#c3d1e8;font-size:14.5px;line-height:1.9">
+          <li><b style="color:#fff">50 mock interviews a month</b> — text, voice, or video (with delivery feedback)</li>
+          <li>Resume-aware questions + follow-ups on weak answers, like a real panel</li>
+          <li>Practise against realistic openings: OEM · Tier-1 · EV startup · consultancy</li>
+          <li>Every answer scored, with the exact book chapter to strengthen it</li>
+          <li>Progress tracking across interviews + report emailed after each session</li>
+        </ul>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+          <a class="btn gold" href="coach.html" style="text-decoration:none">Try 2 questions free →</a>
+          <a class="btn" href="coach-b2b.html" style="text-decoration:none;background:rgba(17,28,48,.9);border:1px solid var(--line);color:var(--ink)">Placement officer? Batch pricing →</a>
+        </div>
+        <div style="font-size:12.5px;color:var(--dim);margin-top:12px">No card needed for the demo — just your email.</div>
+      </div>
+      <div style="background:rgba(17,28,48,.6);border:1px dashed rgba(200,138,75,.4);border-radius:18px;padding:28px">
+        <div style="font-family:var(--mo);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase">Coming soon</div>
+        <div style="font-family:var(--sg);font-weight:800;font-size:19px;margin:10px 0 6px">Electrical · Civil · EV</div>
+        <p style="color:var(--dim);font-size:13.5px;margin-bottom:14px">The Coach is expanding beyond mechanical. Join the list and you will be the first to know — plus an early-bird price.</p>
+        <select id="wlBranch" style="width:100%;background:#0b1524;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 12px;font-size:14px;margin-bottom:10px">
+          <option value="electrical">Electrical engineering</option>
+          <option value="civil">Civil engineering</option>
+          <option value="ev">EV / e-mobility</option>
+        </select>
+        <input type="text" id="wlEmail" placeholder="you@email.com" style="width:100%;background:#0b1524;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px 12px;font-size:14px">
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--dim);margin:10px 0;cursor:pointer"><input type="checkbox" id="wlOk" style="margin-top:3px"> <span>Email me when it launches (and occasional GearUp updates — unsubscribe anytime). <a href="privacy.html" style="color:var(--gold)">Privacy</a>.</span></label>
+        <button class="btn gold" id="wlBtn" onclick="coachWaitlist()" style="width:100%">Join the waitlist →</button>
+        <div id="wlNote" style="font-size:12.5px;color:var(--gold);min-height:17px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+  <style>@media(max-width:760px){.coach-g{grid-template-columns:1fr!important}}</style>
+</section>
 
 <section id="how"><div class="wrap">
   <div class="sec-h"><div class="k">How it works</div><h2>From click to studying — in a minute.</h2></div>
@@ -353,7 +361,6 @@ footer .logo{justify-content:center;margin-bottom:12px}
 
 <footer><div class="wrap"><div class="logo"><svg viewBox="0 0 24 24" fill="#C88A4B"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg> Gear<b>Up</b></div>
   <p>Interactive engineering books by Subramanian J H. Body in White · Plastics &amp; Glazing · Automotive Design · FEA · CFD.</p>
-  <p style="margin-top:14px;font-size:13px"><a href="terms.html" style="color:#e0a668">Terms</a> &nbsp;·&nbsp; <a href="privacy.html" style="color:#e0a668">Privacy</a> &nbsp;·&nbsp; <a href="refunds.html" style="color:#e0a668">Refunds</a> &nbsp;·&nbsp; <a href="contact.html" style="color:#e0a668">Contact</a></p>
   <p style="margin-top:8px;opacity:.6">© GearUp Press. Interactive engineering books for the next generation of designers.</p></div></footer>
 
 <div class="ov" id="ov" onclick="if(event.target===this)closeOv()"><div class="modal" id="modal"></div></div>
@@ -470,6 +477,20 @@ function syncCart(){ document.getElementById('cartn').textContent=CART.size; }
 function cartTotal(){ let sum=0; CART.forEach(id=>sum+=D.books.find(b=>b.id===id).price); const n=CART.size;
   if(n>=5) return {sum,total:D.bundle}; if(n>=3) return {sum,total:Math.round(sum*0.85)}; if(n===2) return {sum,total:Math.round(sum*0.92)}; return {sum,total:sum}; }
 function buyBundle(){ D.books.forEach(b=>CART.add(b.id)); syncCart(); renderCart(); openCart(); }
+async function coachWaitlist(){
+  const em=document.getElementById('wlEmail').value.trim();
+  const note=document.getElementById('wlNote');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ note.textContent='Please enter a valid email.'; return; }
+  if(!document.getElementById('wlOk').checked){ note.textContent='Please tick the consent box.'; return; }
+  const btn=document.getElementById('wlBtn'); btn.disabled=true; note.textContent='Adding you…';
+  try{
+    const r=await fetch('/api/coach-b2b',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'waitlist',email:em,branch:document.getElementById('wlBranch').value,consent:true})});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||'Something went wrong');
+    note.innerHTML='✅ <b style="color:#fff">You are on the list.</b> We will email you at launch.';
+  }catch(e){ btn.disabled=false; note.textContent=e.message; }
+}
 function goCheckout(){ closeOv(); setTimeout(openCart,160); }
 function renderCart(){
   const dw=document.getElementById('cartDrawer');
@@ -589,21 +610,4 @@ function toast(m){const t=document.createElement('div');t.textContent=m;t.style.
 })();
 shelfHTML(); syncCart();
 </script>
-<script>
-async function lmSubmit(){
-  var note=document.getElementById('lm-note'), btn=document.getElementById('lm-go');
-  var email=document.getElementById('lm-email').value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ note.textContent='Please enter a valid email address.'; return; }
-  if(!document.getElementById('lm-ok').checked){ note.textContent='Please tick the box so we may email you the pack.'; return; }
-  btn.disabled=true; note.textContent='Sending your pack…';
-  try{
-    var r=await fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})});
-    var d=await r.json();
-    if(r.ok&&d.ok){ note.textContent='✓ Sent! Check your inbox (and spam, just in case).'; }
-    else { note.textContent=d.error||'Something went wrong, please try again.'; btn.disabled=false; }
-  }catch(e){ note.textContent='Network hiccup, please try again.'; btn.disabled=false; }
-}
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body></html>
