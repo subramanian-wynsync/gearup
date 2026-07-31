@@ -8,14 +8,30 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 const BOOKS = ['fea', 'cfd', 'design', 'biw', 'plastics'];
 
 function textOf(v){
-  // book content blocks can be strings or arrays of {t:'p'|'h'|'ul'|..., ...}
+  // Content blocks in the GearUp books are tuples: ['p','text…'], ['h','…'],
+  // ['ul',[…items]], and qa/usecase pairs like ['Question','Answer'].
+  // Some older topics use plain strings or {text:…} objects — handle all.
+  const TAG = /^(p|h|h1|h2|h3|ul|ol|li|img|d|dg|note|warn|tip|table|code)$/i;
+  const flat = x => {
+    if (x == null) return '';
+    if (typeof x === 'string') return x;
+    if (Array.isArray(x)) return x.map(flat).filter(Boolean).join('. ');
+    if (typeof x === 'object') return x.text || x.c || x.body || '';
+    return '';
+  };
   if (!v) return '';
   if (typeof v === 'string') return v;
   if (Array.isArray(v)) return v.map(b => {
     if (typeof b === 'string') return b;
-    if (Array.isArray(b.items)) return b.items.join('. ');
-    return b.text || b.c || b.body || '';
-  }).join('\n');
+    if (Array.isArray(b)) {
+      const parts = b.map(flat).filter(Boolean);
+      // drop a leading short type-tag like 'p' / 'ul' / 'h2'
+      if (parts.length > 1 && TAG.test(parts[0].trim())) parts.shift();
+      return parts.join(' — ');
+    }
+    if (b && Array.isArray(b.items)) return b.items.map(flat).join('. ');
+    return (b && (b.text || b.c || b.body)) || '';
+  }).filter(Boolean).join('\n');
   return '';
 }
 
