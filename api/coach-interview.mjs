@@ -67,12 +67,27 @@ function buildPlan(books, n){
 }
 
 async function nextQuestion(session){
-  const idx = (session.qa || []).length;
+  const qa = session.qa || [];
+  const nonTech = qa.filter(q => q.is_opener || q.is_warmup).length;
+
+  // After the intro opener comes ONE easy warm-up (telephonic ice-breaker), then technicals.
+  if (qa[0] && qa[0].is_opener && !qa.some(q => q.is_warmup)) {
+    const q = await openai(
+      'You are a friendly automotive-industry interviewer on a telephonic screening round. The candidate just introduced themselves. Ask ONE easy, warm ice-breaker question about their background — e.g. their favourite project, why they chose this field, or a tool they enjoyed learning. NO deep technical content yet; the goal is to settle their nerves. Return only the question.',
+      `Candidate's introduction: ${String(qa[0].answer || '').slice(0, 800)}` +
+      (session.resume_text ? `\nResume: ${session.resume_text.slice(0, 600)}` : '') +
+      (session.job && session.job.title ? `\nTarget role: ${session.job.title}` : ''));
+    const ctx = 'Easy warm-up ice-breaker on a telephonic round. Evaluate warmth, specificity and clarity — a good answer names something concrete (a project, a tool, a reason) and sounds natural. Do NOT demand technical depth.'
+      + (session.resume_text ? `\nResume for reference: ${session.resume_text.slice(0, 600)}` : '');
+    return { question: q, meta: null, context: ctx, is_followup: false, is_warmup: true };
+  }
+
+  const idx = qa.length - nonTech;
   const book = session.plan[Math.min(idx, session.plan.length - 1)];
-  const last = (session.qa || [])[idx - 1];
 
   // follow-up when the previous answer was weak, else a fresh planned question
-  if (last && last.evaluation && last.evaluation.score <= 5 && !last.is_followup) {
+  const last = qa[qa.length - 1];
+  if (last && last.evaluation && last.evaluation.score <= 5 && !last.is_followup && !last.is_opener && !last.is_warmup) {
     const q = await openai(
       'You are a senior automotive-industry technical interviewer. Ask ONE follow-up question that goes one level deeper on the same concept, guided ONLY by the supplied reference. Do not reveal answers. Return only the question.',
       `Reference:\n${last.context}\n\nPrevious question: ${last.question}\nCandidate's (weak) answer: ${last.answer}\nDifficulty: ${session.difficulty}`);
@@ -103,15 +118,16 @@ export default async function handler(req, res){
     if (!body0.consent) return res.status(400).json({ error: 'Please tick the consent box.' });
     const { data: lead } = await supabase.from('leads').select('email,coach_demo_at').eq('email', email).maybeSingle();
     if (lead && lead.coach_demo_at) return res.status(403).json({ error: 'demo_used' });
-    await supabase.from('leads').upsert({ email, source: 'coach-demo', consent: true, coach_demo_at: new Date().toISOString() }, { onConflict: 'email' });
     const skills = (body0.skills || []).map(x => String(x).slice(0, 60)).slice(0, 8);
     let books = [...new Set(skills.flatMap(x => SKILL_MAP.filter(([re]) => re.test(x)).map(([, b]) => b)))];
     if (!books.length) books = ['design', 'fea'];
     const session = { user_id: null, email, skills: skills.length ? skills : ['mechanical design'],
       difficulty: 'medium', plan: buildPlan(books, DEMO_QUESTIONS), resume_text: '', qa: [], status: 'demo' };
+    // generate the first question BEFORE consuming the demo, so a crash never eats it
+    const nq = await nextQuestion(session);
     const { data: ins, error } = await supabase.from('coach_sessions').insert(session).select('id').single();
     if (error) return res.status(500).json({ error: error.message });
-    const nq = await nextQuestion(session);
+    await supabase.from('leads').upsert({ email, source: 'coach-demo', consent: true, coach_demo_at: new Date().toISOString() }, { onConflict: 'email' });
     session.qa.push({ question: nq.question, meta: nq.meta, context: nq.context, is_followup: false });
     await supabase.from('coach_sessions').update({ qa: session.qa }).eq('id', ins.id);
     return res.status(200).json({ session_id: ins.id, question: nq.question, meta: nq.meta, number: 1, total: DEMO_QUESTIONS, demo: true });
@@ -185,11 +201,17 @@ export default async function handler(req, res){
       if (error) throw error;
       await supabase.from('coach_usage').upsert({ email, month: month(), interviews: used + 1, video: vused + (mode === 'video' ? 1 : 0) }, { onConflict: 'email,month' });
 
-      const nq = await nextQuestion(session);
-      session.qa.push({ question: nq.question, meta: nq.meta, context: nq.context, is_followup: nq.is_followup });
+      // Question 1 is always the telephonic-round opener, like a real panel.
+      const openerQ = job
+        ? `Let us begin the way a real panel would. Please introduce yourself in about a minute: your background, one or two projects you are proud of, and why you are interested in a ${job.title} role.`
+        : 'Let us begin the way a real panel would. Please introduce yourself in about a minute: your background, one or two projects you are proud of, and the kind of role you are looking for.';
+      const openerCtx = 'HR-style opener (self-introduction). Evaluate STRUCTURE (present -> past -> future), relevance to the target role, confidence and clarity. Do NOT demand technical depth here. A good answer is 45-90 seconds spoken: who they are, standout project/internship with their specific contribution, and what they want next.'
+        + (session.resume_text ? `\nCandidate background for reference: ${session.resume_text.slice(0, 800)}` : '')
+        + (job ? `\nTarget role: ${job.title} (${job.seg || ''})` : '');
+      session.qa.push({ question: openerQ, meta: null, context: openerCtx, is_followup: false, is_opener: true });
       await supabase.from('coach_sessions').update({ qa: session.qa }).eq('id', ins.id);
-      return res.status(200).json({ session_id: ins.id, question: nq.question, meta: nq.meta,
-        number: 1, total: plan.length, usage: { used: used + 1, limit: INTERVIEWS_PER_MONTH } });
+      return res.status(200).json({ session_id: ins.id, question: openerQ, meta: null,
+        number: 1, total: plan.length + 2, usage: { used: used + 1, limit: INTERVIEWS_PER_MONTH } });
     }
 
     // ---------------- ANSWER ----------------
@@ -208,12 +230,14 @@ export default async function handler(req, res){
       cur.evaluation = JSON.parse(evalRaw);
       if (body.delivery) cur.delivery = { wpm: body.delivery.wpm, fillers: body.delivery.fillers, spoken: !!body.delivery.spoken };
 
-      const done = s.qa.length >= Math.min(s.plan.length + 2, QUESTIONS_PER_INTERVIEW) ||
-                   (s.qa.length >= s.plan.length && !(cur.evaluation.score <= 5 && !cur.is_followup));
-      let out = { evaluation: cur.evaluation, done, number: s.qa.length, total: s.plan.length };
+      const extra = s.qa.filter(q => q.is_opener || q.is_warmup).length; // opener + warm-up slots
+      const target = s.plan.length + extra;
+      const done = s.qa.length >= Math.min(target + 2, QUESTIONS_PER_INTERVIEW + 2) ||
+                   (s.qa.length >= target && !(cur.evaluation.score <= 5 && !cur.is_followup && !cur.is_opener && !cur.is_warmup));
+      let out = { evaluation: cur.evaluation, done, number: s.qa.length, total: target };
       if (!done) {
         const nq = await nextQuestion(s);
-        s.qa.push({ question: nq.question, meta: nq.meta, context: nq.context, is_followup: nq.is_followup });
+        s.qa.push({ question: nq.question, meta: nq.meta, context: nq.context, is_followup: nq.is_followup, is_warmup: nq.is_warmup || false });
         out.question = nq.question; out.meta = nq.meta; out.is_followup = nq.is_followup;
         out.number = s.qa.length;
       } else { s.status = 'finished'; }
