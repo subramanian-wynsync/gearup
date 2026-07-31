@@ -50,7 +50,32 @@ textarea{min-height:96px;resize:vertical}
 .job .jt{font-family:var(--sg);font-weight:700;font-size:15.5px}
 .job .js{font-family:var(--mo);font-size:11px;color:var(--gold2);margin:3px 0 6px}
 .job .ja{font-size:12.5px;color:var(--dim)}
-#cam video{width:100%;border-radius:12px;background:#000;transform:scaleX(-1)}
+.stepk{font-family:var(--mo);font-size:11px;letter-spacing:.16em;color:var(--gold2)}
+/* ------- call screen ------- */
+.callhead{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.callinfo b{font-family:var(--sg);font-size:15.5px}
+.callstate{font-family:var(--mo);font-size:11.5px;color:var(--dim);margin-top:2px}
+.calldot{width:11px;height:11px;border-radius:50%;background:var(--red);flex:none;animation:ringdot 1.1s infinite}
+.calldot.live{background:var(--grn);animation:none;box-shadow:0 0 0 4px rgba(95,211,154,.15)}
+@keyframes ringdot{50%{opacity:.35}}
+.callbody{display:grid;grid-template-columns:1fr;gap:14px}
+.videocall .callbody{grid-template-columns:1.5fr 1fr}
+@media(max-width:640px){.videocall .callbody{grid-template-columns:1fr}}
+.ivwin{background:radial-gradient(120% 130% at 50% 8%,#1d2b47 0%,#0e1729 62%,#0a1120 100%);border:1px solid var(--line);border-radius:14px;display:flex;align-items:flex-end;justify-content:center;min-height:210px;overflow:hidden;position:relative}
+.ivwin:after{content:"INTERVIEWER";position:absolute;left:10px;top:8px;font-family:var(--mo);font-size:9.5px;letter-spacing:.14em;color:rgba(147,166,198,.65)}
+.ivwin svg{width:min(64%,240px);display:block}
+.selfwin video{width:100%;border-radius:12px;background:#000;transform:scaleX(-1)}
+/* mascot animation states */
+.iv .iv-head{transform-origin:90px 152px;animation:ivsway 6s ease-in-out infinite}
+@keyframes ivsway{0%,100%{transform:rotate(0deg) translateY(0)}30%{transform:rotate(.7deg) translateY(.6px)}70%{transform:rotate(-.7deg) translateY(0)}}
+.iv.nodding .iv-head{animation:ivnod .85s ease-in-out infinite}
+@keyframes ivnod{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(4px) rotate(-1.6deg)}}
+.iv .iv-eyes{transform-origin:90px 113px;animation:ivblink 4.4s infinite}
+@keyframes ivblink{0%,93%,100%{transform:scaleY(1)}95.5%,97.5%{transform:scaleY(.08)}}
+.iv .m-open{opacity:0;transform-origin:90px 141px}
+.iv.talking .m-closed{opacity:0}
+.iv.talking .m-open{opacity:1;animation:ivtalk .3s steps(2) infinite}
+@keyframes ivtalk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
 .meter{height:8px;background:#0b1524;border-radius:5px;overflow:hidden;margin-top:8px}
 .meter i{display:block;height:100%;background:linear-gradient(90deg,#ff7a66,#F2A900,#5fd39a)}
 .dchip{display:inline-block;font-family:var(--mo);font-size:11.5px;border:1px solid var(--line);border-radius:16px;padding:4px 10px;margin:8px 6px 0 0;color:#cdd9ee}
@@ -82,18 +107,23 @@ textarea{min-height:96px;resize:vertical}
   <h1>Your AI interviewer, <span style="color:var(--gold)">trained for mechanical &amp; automotive engineers.</span></h1>
   <p class="sub">Questions come from the five GearUp books, adapted to your skills. Answer by typing or speaking; get scored feedback, language tips, and exact chapters to study.</p>
   <div class="card">
+    <div class="stepk">STEP 1 · YOUR RESUME</div>
+    <p style="font-size:13px;color:var(--dim);margin:4px 0 0">The interviewer reads this first — like a real panel. Your intro question, warm-up and technical follow-ups all draw from it.</p>
+    <label>Resume summary</label>
+    <textarea id="resume" placeholder="Projects, internships, tools you've used, final-year project — a few lines is enough…"></textarea>
     <label>Your skills / focus areas (comma separated)</label>
     <input type="text" id="skills" placeholder="e.g. FEA, meshing, CATIA design, injection moulding">
+  </div>
+  <div class="card">
+    <div class="stepk">STEP 2 · YOUR INTERVIEW</div>
+    <label>Interview type</label>
+    <div class="row">
+      <span class="mchip on" id="m-text" onclick="setMode('text')">⌨️ Text — typed Q&amp;A</span>
+      <span class="mchip" id="m-voice" onclick="setMode('voice')">📞 Audio — telephonic round</span>
+      <span class="mchip" id="m-video" onclick="setMode('video')">🎥 Video — face the panel</span>
+    </div>
     <label>Difficulty</label>
     <select id="difficulty"><option value="easy">Easy — warm up</option><option value="medium" selected>Medium — realistic fresher interview</option><option value="hard">Hard — push me</option></select>
-    <label>Paste your resume summary (optional — questions will reference it)</label>
-    <textarea id="resume" placeholder="Projects, internships, tools you've used…"></textarea>
-    <label>Interview mode</label>
-    <div class="row">
-      <span class="mchip on" id="m-text" onclick="setMode('text')">⌨️ Text</span>
-      <span class="mchip" id="m-voice" onclick="setMode('voice')">🎙️ Voice — spoken Q&amp;A</span>
-      <span class="mchip" id="m-video" onclick="setMode('video')">🎥 Video — camera + delivery tips</span>
-    </div>
     <div class="row" style="margin-top:18px;justify-content:space-between">
       <button class="btn gh" onclick="showProgress()">📈 My progress</button>
       <button class="btn" id="startBtn" onclick="startInterview()">Start interview →</button>
@@ -119,10 +149,21 @@ textarea{min-height:96px;resize:vertical}
   <div class="row" style="justify-content:space-between;margin-bottom:12px">
     <span class="prog" id="prog"></span><span class="prog" id="quota"></span>
   </div>
-  <div class="card hide" id="cam">
-    <video id="camv" autoplay muted playsinline></video>
-    <div class="meter"><i id="lightbar" style="width:0%"></i></div>
-    <div style="font-size:12.5px;color:var(--dim);margin-top:6px" id="camtip">Camera check: face the light, center yourself, look at the lens when answering.</div>
+  <div class="card hide" id="callcard">
+    <div class="callhead">
+      <span class="calldot" id="calldot"></span>
+      <div class="callinfo"><b>GearUp Interview Panel</b>
+        <div class="callstate"><span id="callstate">Ringing…</span> · <span id="calltimer">00:00</span></div></div>
+      <span style="font-family:var(--mo);font-size:10.5px;color:var(--dim)" id="callmode"></span>
+    </div>
+    <div class="callbody" id="callbody">
+      <div class="ivwin iv" id="ivwin"></div>
+      <div class="selfwin hide" id="selfwin">
+        <video id="camv" autoplay muted playsinline></video>
+        <div class="meter"><i id="lightbar" style="width:0%"></i></div>
+        <div style="font-size:11.5px;color:var(--dim);margin-top:4px" id="camtip">Face the light · look at the lens</div>
+      </div>
+    </div>
   </div>
   <div class="card">
     <div class="qmeta" id="qmeta"></div>
@@ -176,7 +217,87 @@ async function subscribeNow(btn){
     alert(e.message);
   }
 }
-function speak(text){ if(!VOICE||!window.speechSynthesis) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=0.98; speechSynthesis.speak(u);}catch(e){} }
+/* ---------- the GearUp interviewer (same mechanic, out of the helmet, in a blazer) ---------- */
+function ivSVG(){
+  const SK='#b3763e', SKD='#9a6231', HAIR='#17110b', NAVY='#1b2740', NAVYD='#131d30', GOLD='#F2A900', EYE='#0d0d14', LIP='#8a4a30';
+  return `<svg viewBox="28 52 124 150" xmlns="http://www.w3.org/2000/svg" aria-label="GearUp interviewer">
+  <!-- blazer + shirt + tie -->
+  <path d="M38 202 L41 176 Q64 156 90 156 Q116 156 139 176 L142 202 Z" fill="${NAVY}"/>
+  <path d="M76 160 L90 178 L104 160 L106 202 L74 202 Z" fill="#eef2f7"/>
+  <path d="M76 160 L90 178 L69 188 L64 167 Q70 161 76 160 Z" fill="${NAVYD}"/>
+  <path d="M104 160 L90 178 L111 188 L116 167 Q110 161 104 160 Z" fill="#16203a"/>
+  <path d="M86 165 L94 165 L96 171 L90 173 L84 171 Z" fill="${GOLD}"/>
+  <path d="M87 172 L93 172 L97 188 L90 200 L83 188 Z" fill="${GOLD}"/>
+  <path d="M87 172 L93 172 L97 188 L90 200 L83 188 Z" fill="#000" opacity=".12"/>
+  <rect x="119" y="188" width="12" height="6" rx="1" fill="${GOLD}" opacity=".9"/>
+  <!-- head -->
+  <g class="iv-head">
+    <rect x="82" y="146" width="16" height="16" fill="${SKD}"/>
+    <circle cx="61" cy="114" r="5" fill="${SKD}"/><circle cx="119" cy="114" r="5" fill="${SKD}"/>
+    <ellipse cx="90" cy="112" rx="29" ry="31" fill="${SK}"/>
+    <path d="M59 102 Q55 60 90 56 Q125 60 121 102 L117 97 Q116 85 90 85 Q64 85 63 97 Z" fill="${HAIR}"/>
+    <path d="M59 96 Q57 112 62 122 L67 100 Z" fill="${HAIR}"/><path d="M121 96 Q123 112 118 122 L113 100 Z" fill="${HAIR}"/>
+    <path d="M61 108 Q62 151 90 159 Q118 151 119 108 Q116 133 108 140 Q100 151 90 151 Q80 151 72 140 Q64 133 61 108 Z" fill="${HAIR}"/>
+    <path d="M75 131 Q90 126 105 131 Q98 136 90 134 Q82 136 75 131 Z" fill="${HAIR}"/>
+    <g fill="none" stroke="#141018" stroke-width="3.4"><rect x="62" y="103" width="25" height="18" rx="5"/><rect x="93" y="103" width="25" height="18" rx="5"/><line x1="87" y1="109" x2="93" y2="109"/><line x1="62" y1="108" x2="54" y2="110"/><line x1="118" y1="108" x2="126" y2="110"/></g>
+    <g stroke="${HAIR}" stroke-width="4" stroke-linecap="round" fill="none"><path d="M64 100 q9 -2 18 0"/><path d="M98 100 q9 -2 18 0"/></g>
+    <g class="iv-eyes"><circle cx="74.5" cy="113" r="2.9" fill="${EYE}"/><circle cx="105.5" cy="113" r="2.9" fill="${EYE}"/></g>
+    <path class="m-closed" d="M82 141 q8 5 16 0" fill="none" stroke="${LIP}" stroke-width="3" stroke-linecap="round"/>
+    <g class="m-open"><path d="M81 138 q9 10 18 0 q-9 6 -18 0z" fill="#6a2f1e"/><path d="M84.5 140 q4.5 2.5 9 0" fill="none" stroke="#fff" stroke-width="1.8" opacity=".85"/></g>
+  </g></svg>`;
+}
+function ivTalk(on){ const w=$('ivwin'); if(w) w.classList.toggle('talking',!!on); }
+let nodT=null;
+function ivNodPulse(){ const w=$('ivwin'); if(!w) return; w.classList.add('nodding'); clearTimeout(nodT); nodT=setTimeout(()=>{w.classList.remove('nodding');},1500); }
+
+/* ---------- telephonic / video-call experience ---------- */
+let callInt=null, callT0=null;
+function callFmt(s){ s=Math.floor(s); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+function openCall(){
+  $('callcard').classList.remove('hide');
+  $('ivwin').innerHTML=ivSVG();
+  const vid=MODE==='video';
+  $('callcard').classList.toggle('videocall',vid);
+  $('selfwin').classList.toggle('hide',!vid);
+  $('callmode').textContent=vid?'VIDEO ROUND':'TELEPHONIC ROUND';
+}
+function ringTone(done){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const burst=t=>{ const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine'; o.frequency.value=425; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(0.1,t+0.04);
+      g.gain.setValueAtTime(0.1,t+0.85); g.gain.linearRampToValueAtTime(0.0001,t+0.95);
+      o.start(t); o.stop(t+1); };
+    const t0=ctx.currentTime+0.05; burst(t0); burst(t0+1.5);
+    setTimeout(()=>{ try{ctx.close();}catch(e){} done(); },3100);
+  }catch(e){ done(); }
+}
+function beginCall(firstQ){
+  openCall();
+  $('callstate').textContent='Ringing…'; $('calldot').classList.remove('live');
+  ringTone(()=>{
+    $('callstate').textContent='Connected'; $('calldot').classList.add('live');
+    callT0=Date.now(); clearInterval(callInt);
+    callInt=setInterval(()=>{ const el=$('calltimer'); if(el) el.textContent=callFmt((Date.now()-callT0)/1000); },1000);
+    const greet='Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. Take a breath and settle in — this is practice, so relax. Let us begin.';
+    speak(greet,()=>speak(firstQ));
+  });
+}
+function endCall(){ clearInterval(callInt); const c=$('callcard'); if(c) c.classList.add('hide'); try{speechSynthesis.cancel();}catch(e){} }
+
+let SKIP_SPEAK_ONCE=false;
+function speak(text,onend){
+  if(!VOICE||!window.speechSynthesis){ if(onend)onend(); return; }
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text); u.rate=0.98;
+    u.onstart=()=>ivTalk(true);
+    u.onend=()=>{ ivTalk(false); if(onend)onend(); };
+    u.onerror=()=>{ ivTalk(false); if(onend)onend(); };
+    speechSynthesis.speak(u);
+  }catch(e){ if(onend)onend(); }
+}
 
 /* free on-device speech-to-text (Chrome/Edge/Safari) */
 let rec=null, recOn=false;
@@ -186,7 +307,11 @@ function toggleMic(){
   if(recOn){ rec.stop(); return; }
   rec=new SR(); rec.lang='en-IN'; rec.continuous=true; rec.interimResults=true;
   let base=$('answer').value;
-  rec.onresult=e=>{ let fin='',intr=''; for(const r of e.results){ (r.isFinal?fin+=r[0].transcript+' ':intr+=r[0].transcript); } $('answer').value=(base+' '+fin+intr).trim(); if(fin) base=(base+' '+fin).trim(); };
+  rec.onresult=e=>{ let fin='',intr='';
+    for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal)fin+=r[0].transcript+' '; else intr+=r[0].transcript; }
+    if(fin) base=(base+' '+fin).trim();
+    ivNodPulse();
+    $('answer').value=(base+(intr?' '+intr:'')).trim(); };
   rec.onend=()=>{ if(recT0){recTime+=Date.now()-recT0;recT0=0;} recOn=false; $('micBtn').classList.remove('on'); };
   rec.onerror=()=>{ recOn=false; $('micBtn').classList.remove('on'); };
   rec.start(); recOn=true; recT0=Date.now(); $('micBtn').classList.add('on');
@@ -198,7 +323,7 @@ function showQuestion(d){
   $('qmeta').textContent=d.meta?('From: '+d.meta.book_name+' · Ch '+d.meta.chapter_n):'';
   $('qtext').textContent=d.question;
   $('answer').value=''; $('sendBtn').disabled=false; $('anscard').classList.remove('hide');
-  speak(d.question);
+  if(SKIP_SPEAK_ONCE){ SKIP_SPEAK_ONCE=false; } else speak(d.question);
 }
 function evalHTML(ev,dv){
   const cls=ev.score>=7?'s-hi':ev.score>=5?'s-md':'s-lo';
@@ -214,7 +339,7 @@ function evalHTML(ev,dv){
 async function initCam(){
   try{
     camStream=await navigator.mediaDevices.getUserMedia({video:{width:640},audio:false});
-    $('camv').srcObject=camStream; $('cam').classList.remove('hide');
+    $('camv').srcObject=camStream; $('selfwin').classList.remove('hide');
     const cv=document.createElement('canvas'); cv.width=64; cv.height=48; const cx=cv.getContext('2d');
     camTimer=setInterval(()=>{ try{
       cx.drawImage($('camv'),0,0,64,48);
@@ -226,7 +351,7 @@ async function initCam(){
     }catch(e){} },1500);
   }catch(e){ $('note2').textContent='Camera unavailable — continuing in voice mode.'; }
 }
-function stopCam(){ if(camTimer)clearInterval(camTimer); if(camStream){camStream.getTracks().forEach(t=>t.stop());} $('cam').classList.add('hide'); }
+function stopCam(){ if(camTimer)clearInterval(camTimer); if(camStream){camStream.getTracks().forEach(t=>t.stop());} $('selfwin').classList.add('hide'); endCall(); }
 function deliveryStats(text){
   const words=text.split(/\s+/).filter(Boolean).length;
   const fillers=(text.match(/\b(um+|uh+|like|basically|actually|you know)\b/gi)||[]).length;
@@ -278,7 +403,8 @@ async function doStart(job){
     $('setup').classList.add('hide'); $('jobs').classList.add('hide'); $('ivw').classList.remove('hide'); $('feed').innerHTML='';
     if(JOB) $('quota').textContent=(d.usage?d.usage.used+' / '+d.usage.limit+' · ':'')+JOB.title;
     if(MODE==='video') initCam();
-    showQuestion(d);
+    if(MODE!=='text'){ SKIP_SPEAK_ONCE=true; showQuestion(d); beginCall(d.question); }
+    else showQuestion(d);
   }catch(e){
     $('jobs').classList.add('hide'); $('setup').classList.remove('hide'); $('startBtn').disabled=false;
     $('note').innerHTML = e.code===402
@@ -329,7 +455,8 @@ async function demoStart(){
     const d=await api({action:'demo_start',email,consent:true,skills});
     SID=d.session_id; $('demogate').classList.add('hide'); $('ivw').classList.remove('hide'); $('feed').innerHTML='';
     $('quota').textContent='FREE DEMO · 2 questions';
-    showQuestion(d);
+    if(VOICE){ SKIP_SPEAK_ONCE=true; showQuestion(d); beginCall(d.question); }
+    else showQuestion(d);
   }catch(e){
     $('demoBtn').disabled=false;
     if(e.message==='demo_used'){
