@@ -96,6 +96,17 @@ th{font-family:var(--mo);font-size:10.5px;letter-spacing:.1em;text-transform:upp
   </div>
 
   <div class="card">
+    <div class="k">Coach launch announcement (one-time email)</div>
+    <p style="font-size:13px;color:var(--dim)">Tells your existing leads and book customers that the AI Interview Coach is live, with the free phone + video demo. Each address is only ever sent once, with an unsubscribe link.</p>
+    <div class="row" style="margin:10px 0">
+      <label class="switch" style="text-transform:none;letter-spacing:0"><input type="checkbox" id="anleads" checked> <span>Leads (demo users, starter pack, waitlist)</span></label>
+      <label class="switch" style="text-transform:none;letter-spacing:0"><input type="checkbox" id="ancust" checked> <span>Book customers</span></label>
+    </div>
+    <div class="row"><button class="btn gh" onclick="announce(true)">Count recipients →</button><button class="btn" id="anbtn" onclick="announce(false)">Send announcement →</button></div>
+    <div class="note" id="annote"></div>
+  </div>
+
+  <div class="card">
     <div class="k">Usage report</div>
     <div class="row"><input type="text" id="rcollege" placeholder="Batch name (empty = all batches)" style="max-width:320px"><button class="btn gh" onclick="loadReport()">Load report →</button></div>
     <div id="rout"></div>
@@ -133,6 +144,15 @@ async function grantBatch(){
     $('gnote').innerHTML='✅ <b style="color:#fff">'+d.granted+' licenses active</b> until '+new Date(d.active_until).toLocaleDateString()+' ('+d.new_accounts+' new accounts created'+($('gwelcome').checked?', welcome emails sent':'')+').';
     $('gbtn').disabled=false;
   }catch(e){ $('gbtn').disabled=false; $('gnote').textContent=e.message; }
+}
+async function announce(dry){
+  $('anbtn').disabled=true; $('annote').textContent=dry?'Counting…':'Sending, this can take up to a minute…';
+  try{
+    const d=await api({action:'announce',key:KEY,dry:!!dry,leads:$('anleads').checked,customers:$('ancust').checked});
+    if(dry) $('annote').innerHTML='Would reach <b style="color:#fff">'+d.would_send+'</b> addresses (already-sent ones are excluded automatically).';
+    else $('annote').innerHTML='✅ Sent to <b style="color:#fff">'+d.sent+'</b> addresses.'+(d.remaining>0?' <b style="color:var(--gold2)">'+d.remaining+' remaining</b>, click Send again to continue.':' All done.');
+    $('anbtn').disabled=false;
+  }catch(e){ $('anbtn').disabled=false; $('annote').textContent=e.message; }
 }
 async function loadReport(){
   $('rout').innerHTML='<p class="note">Loading…</p>';
