@@ -78,6 +78,19 @@ textarea{min-height:96px;resize:vertical}
 .ivwave i{width:4px;background:var(--gold2);border-radius:2px;animation:ivwv .7s ease-in-out infinite}
 .ivwave i:nth-child(2){animation-delay:.12s}.ivwave i:nth-child(3){animation-delay:.24s}.ivwave i:nth-child(4){animation-delay:.34s}.ivwave i:nth-child(5){animation-delay:.18s}
 @keyframes ivwv{0%,100%{height:5px}50%{height:16px}}
+.ivwin.audiocall{aspect-ratio:auto;min-height:230px;max-width:none;display:flex;align-items:center;justify-content:center}
+.ivwin.audiocall:after{content:"ON CALL"}
+.ivcall{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;width:100%;padding:26px 0}
+.ivrings{position:relative;width:124px;height:124px;display:grid;place-items:center}
+.ivring{width:110px;height:110px;border-radius:50%;overflow:hidden;border:2px solid var(--gold);position:relative;z-index:2;background:#0b1524}
+.ivring img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.ivrings i{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(242,169,0,.5);opacity:0;z-index:1}
+.talking .ivrings i{animation:ring 1.6s ease-out infinite}
+.talking .ivrings i:nth-child(2){animation-delay:.8s}
+@keyframes ring{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.45);opacity:0}}
+.ivcalltxt{font-family:var(--mo);font-size:12px;color:var(--dim);letter-spacing:.04em}
+.ivcall .ivwave{position:static;transform:none;background:none}
+
 .ivframe.ivvid{position:absolute;inset:0;width:100%;margin:0}
 .ivwin{aspect-ratio:4/5;width:100%;max-width:400px;margin:0 auto}
 .ivv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 18%;opacity:0;transition:opacity .35s ease}
@@ -273,19 +286,27 @@ async function subscribeNow(btn){
 const IV_VIDS={idle:'avatar/iv-idle.mp4',talking:'avatar/iv-talking.mp4',nod:'avatar/iv-nod.mp4',smile:'avatar/iv-smile.mp4'};
 const IV_POSTER={idle:'avatar/pv-idle.jpg',talking:'avatar/pv-talking.jpg',nod:'avatar/pv-nod.jpg',smile:'avatar/pv-smile.jpg'};
 let ivTalkOn=false, nodT=null, ivTmpT=null;
-function ivSVG(){
+function ivVideoEl(){
   return '<div class="ivframe ivvid">'+Object.keys(IV_VIDS).map(k=>
     '<video class="ivv'+(k==='idle'?' on':'')+'" id="ivv-'+k+'" src="'+IV_VIDS[k]+'" poster="'+IV_POSTER[k]+'" muted loop playsinline preload="auto"></video>'
   ).join('')+'<div class="ivwave"><i></i><i></i><i></i><i></i><i></i></div></div>';
 }
+function ivAudioEl(){
+  return '<div class="ivcall">'+
+    '<div class="ivrings"><i></i><i></i><div class="ivring"><img src="avatar/pv-idle.jpg" alt="GearUp interviewer"></div></div>'+
+    '<div class="ivcalltxt" id="ivstate">🎧 On call with your interviewer</div>'+
+    '<div class="ivwave"><i></i><i></i><i></i><i></i><i></i></div></div>';
+}
+function ivSVG(){ return MODE==='video' ? ivVideoEl() : ivAudioEl(); }
+function ivState(t){ const s=$('ivstate'); if(s) s.textContent=t; }
 function ivShow(k){
   Object.keys(IV_VIDS).forEach(x=>{ const v=$('ivv-'+x); if(!v) return;
     if(x===k){ v.classList.add('on'); try{ v.play(); }catch(e){} }
     else { v.classList.remove('on'); if(x!=='idle'){ try{ v.pause(); }catch(e){} } }
   });
 }
-function ivTalk(on){ const w=$('ivwin'); if(!w) return; ivTalkOn=!!on; w.classList.toggle('talking',!!on); ivShow(on?'talking':'idle'); }
-function ivListen(on){ if(ivTalkOn) return; ivShow(on?'nod':'idle'); }
+function ivTalk(on){ const w=$('ivwin'); if(!w) return; ivTalkOn=!!on; w.classList.toggle('talking',!!on); ivShow(on?'talking':'idle'); ivState(on?'🎧 Interviewer speaking…':'🎧 On call with your interviewer'); }
+function ivListen(on){ if(ivTalkOn) return; ivShow(on?'nod':'idle'); ivState(on?'🎙️ Listening to you…':'🎧 On call with your interviewer'); }
 function ivNodPulse(){ if(ivTalkOn) return; ivShow('nod'); clearTimeout(nodT); nodT=setTimeout(()=>{ if(!ivTalkOn) ivShow('idle'); },2200); }
 function ivSmile(){ if(ivTalkOn) return; ivShow('smile'); clearTimeout(ivTmpT); ivTmpT=setTimeout(()=>{ if(!ivTalkOn) ivShow('idle'); },4000); }
 
@@ -299,6 +320,7 @@ function openCall(){
   const vid=MODE==='video';
   $('callcard').classList.toggle('videocall',vid);
   $('selfwin').classList.toggle('hide',!vid);
+  $('ivwin').classList.toggle('audiocall',!vid);
   $('callmode').textContent=vid?'VIDEO ROUND':'TELEPHONIC ROUND';
   $('calltips').innerHTML=vid
     ? '🎥 <b style="color:#fff">Before we connect:</b> find a quiet, well-lit spot — light on your face, not behind you. Camera at eye level, sit upright, and look into the lens when answering — exactly like a real video panel round.'
