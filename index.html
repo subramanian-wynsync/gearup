@@ -59,8 +59,8 @@ nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
 .hero p.sub{font-size:clamp(16px,2.2vw,20px);color:#c4d2ea;max-width:600px}
 .hero .cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
 /* student testimonials */
-.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;max-width:1040px;margin:0 auto}
-.tcard{background:rgba(17,28,48,.86);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column}
+.tgrid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1040px;margin:0 auto}
+.tcard{background:rgba(17,28,48,.86);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;flex:1 1 290px;max-width:335px;min-width:270px}
 .tq{font-size:13.8px;color:#c3d1e8;line-height:1.65;flex:1}
 .tn{font-family:var(--sg);font-weight:700;font-size:15px;margin-top:14px;color:#fff}
 .tr{font-family:var(--mo);font-size:11px;color:var(--gold);margin-top:3px;letter-spacing:.04em}
@@ -96,7 +96,8 @@ section{padding:80px 0;position:relative;z-index:1}
 .val h3{font-family:var(--sg);font-weight:700;font-size:17px;margin-bottom:7px}
 .val p{font-size:14px;color:var(--dim)}
 /* books */
-.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+.shelf{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
+.shelf>*{flex:1 1 320px;max-width:400px;min-width:300px}
 .book{background:rgba(17,28,48,.92);backdrop-filter:blur(4px);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.18s}
 .book:hover{transform:translateY(-4px);border-color:#3a4c6e;box-shadow:0 20px 50px rgba(0,0,0,.4)}
 .book .cov{position:relative;aspect-ratio:2/3;overflow:hidden;background:#0b1220;border-bottom:1px solid var(--line)}
@@ -352,7 +353,7 @@ footer .logo{justify-content:center;margin-bottom:12px}
 
 <section id="coach" style="background:linear-gradient(180deg,rgba(17,28,48,.4),transparent)">
   <div class="wrap">
-    <div class="sec-h"><div class="k">New, beyond the books</div><h2>Your AI interview coach. Built by these books.</h2><p>Mock interviews trained specifically for <b style="color:#fff">mechanical &amp; automotive engineers</b>, the questions real OEM and Tier-1 panels ask, with feedback that points to the exact chapter to fix.</p></div>
+    <div class="sec-h"><div class="k">New, beyond the books</div><h2>Your AI interview coach. Trained on real interviews.</h2><p>Mock interviews for <b style="color:#fff">mechanical &amp; automotive engineers</b>, built from 18+ years of real panels: the questions OEMs, Tier-1s and suppliers actually ask, with feedback that points you to exactly what to fix.</p></div>
     <div style="max-width:920px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:22px" class="coach-g">
       <div style="background:rgba(17,28,48,.86);border:1px solid var(--line);border-radius:18px;padding:28px">
         <div style="font-family:var(--mo);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase">GearUp Interview Coach</div>
@@ -418,7 +419,7 @@ footer .logo{justify-content:center;margin-bottom:12px}
       <p>Along the way I sat with more than a hundred tier one and tier two manufacturers and watched their lines run shift after shift: injection molding, blow molding, thermoforming, stamping, casting, forging, and deep drawing. I did this across Japan, India, Germany, Sweden, Poland, the Czech Republic, Austria, and Indonesia, inside plants like Renault-Nissan in Chennai, Mercedes-Benz in Pune and Sindelfingen, and Scania in Södertälje and Oskarshamn.</p>
       <p>Here is what that means for you. Read the <strong>Body in White</strong> book and you will not only understand a car body, you will be able to design sheet metal components for any product and any company. Read the <strong>plastics</strong> book and you become a plastics engineer who can design polymer parts far beyond a car. If you are on the plastics side and want to move into body engineering, this set takes you there, and it works just as well the other way around. And when it is time to face a technical interview, the <strong>Design, FEA, and CFD</strong> books walk you through the questions you are most likely to be asked, from the basics right up to expert level.</p>
       <p>The <strong>AI Interview Coach</strong> comes from the same place. In eighteen years I have sat on both sides of the interview table: the questions I asked candidates at Nissan, Mercedes-Benz and Scania, the questions my colleagues asked in their panels, and the questions more than <strong>2,000 of my students</strong> faced in their own placements and interviews. Easily <strong>20,000+ real interview questions</strong> have passed through my hands, and the sharpest 4,000 of them became the Q&amp;A inside these books. The Coach is built on exactly that material. When it interviews you, it is not inventing questions from thin air; it is asking what the industry actually asks, the way we actually ask it.</p>
-      <p>If you are a final year mechanical or automobile engineer, an experienced hand aiming higher, or you are trying to break into the automotive world, this is the head start I wish someone had handed me on my first day. Open the first book, or sit for your first mock interview. Your career in cars starts here.</p>
+      <p>If you are a final year mechanical or automobile engineer, an experienced hand aiming higher, or you are trying to break into the automotive world, this is the head start I wish someone had handed me on my first day. Open the first book, or sit for your first mock interview. Your career in the mechanical and automotive world starts here.</p>
       <div class="au-sign">Subramanian J H</div>
       <div class="au-sub">Mechanical Engineer · 18+ years in passenger cars and heavy vehicles · Nissan · Mercedes-Benz · Scania</div>
     </div>
