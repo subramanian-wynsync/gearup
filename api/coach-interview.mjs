@@ -313,7 +313,7 @@ export default async function handler(req, res){
 "technical_summary":"3-4 sentences: strongest areas, weakest areas, one concrete habit to fix",
 "communication_feedback":"3-4 sentences on voice clarity, pace, sentence construction, vocabulary and language command${'' /* spoken adds metrics */}",
 "presentation_feedback":"2-3 sentences of interview-presence advice: environment (quiet place, headphones), being slow and steady, expressiveness, eye contact and posture for video rounds",
-"practice_plan":["5 short actionable practice items for the next 7 days"]}`,
+"practice_plan":["5 short actionable practice items for the next 7 days — mix technical revision with habit tips like practising answers aloud in front of a mirror daily, recording yourself and listening back, and for video rounds dressing neatly and facing a good light"]}`,
           `Interview mode: ${s.mode}${spoken ? ` (spoken). Delivery metrics: average pace ${wpmAvg || '?'} words/min, ${fillers} filler words total.` : ''}\n\n${digest}`, true);
         report.coach = JSON.parse(coachRaw);
       } catch (e) { console.error('coach synthesis', e); }

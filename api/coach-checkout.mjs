@@ -1,4 +1,4 @@
-// GearUp Interview Coach — $5.99/month subscription checkout (Stripe).
+// GearUp Interview Coach — $6.99/month subscription checkout (Stripe).
 // POST {} with Authorization (logged-in) OR { email } (guest, e.g. from the demo).
 // The webhook (coach-webhook.mjs) activates the subscription and creates the
 // GearUp account if the subscriber does not have one yet.
@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-const PRICE_USD_CENTS = parseInt(process.env.COACH_PRICE_CENTS || '599', 10);
+const PRICE_USD_CENTS = parseInt(process.env.COACH_PRICE_CENTS || '699', 10);
 
 export default async function handler(req, res){
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
