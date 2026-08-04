@@ -3,14 +3,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Catalogue — prices in USD. No Stripe Price IDs needed: line items are built inline.
 const CAT = {
-  biw:      { name: 'Body in White',                            price: 29 },
-  plastics: { name: 'Automotive Plastics & Glazing',            price: 29 },
-  design:   { name: 'Cracking the Automotive Design Interview', price: 19 },
-  fea:      { name: 'Cracking the FEA & Simulation Interview',  price: 19 },
-  cfd:      { name: 'The Complete CFD Engineer',                price: 19 },
+  biw:      { name: 'Body in White',                            price: 15 },   // launch offer (was 29)
+  plastics: { name: 'Automotive Plastics & Glazing',            price: 15 },   // launch offer (was 29)
+  design:   { name: 'Cracking the Automotive Design Interview', price: 10 },   // launch offer (was 19)
+  fea:      { name: 'Cracking the FEA & Simulation Interview',  price: 10 },   // launch offer (was 19)
+  cfd:      { name: 'The Complete CFD Engineer',                price: 10 },   // launch offer (was 19)
 };
 const ALL = ['biw','plastics','design','fea','cfd'];
-const BUNDLE_PRICE = 79;
+const BUNDLE_PRICE = 39;   // launch offer (was 79)
 // Public cover art shown on the Stripe checkout line items (canonical www domain).
 const IMG_BASE = 'https://www.gearup.study/covers';
 
