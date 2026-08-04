@@ -65,17 +65,25 @@ textarea{min-height:96px;resize:vertical}
 .ivwin:after{content:"INTERVIEWER";position:absolute;left:10px;top:8px;font-family:var(--mo);font-size:9.5px;letter-spacing:.14em;color:rgba(147,166,198,.65)}
 .ivwin svg{width:min(64%,240px);display:block}
 .selfwin video{width:100%;border-radius:12px;background:#000;transform:scaleX(-1)}
-/* mascot animation states */
-.iv .iv-head{transform-origin:90px 152px;animation:ivsway 6s ease-in-out infinite}
-@keyframes ivsway{0%,100%{transform:rotate(0deg) translateY(0)}30%{transform:rotate(.7deg) translateY(.6px)}70%{transform:rotate(-.7deg) translateY(0)}}
-.iv.nodding .iv-head{animation:ivnod .85s ease-in-out infinite}
-@keyframes ivnod{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(4px) rotate(-1.6deg)}}
-.iv .iv-eyes{transform-origin:90px 113px;animation:ivblink 4.4s infinite}
-@keyframes ivblink{0%,93%,100%{transform:scaleY(1)}95.5%,97.5%{transform:scaleY(.08)}}
-.iv .m-open{opacity:0;transform-origin:90px 141px}
-.iv.talking .m-closed{opacity:0}
-.iv.talking .m-open{opacity:1;animation:ivtalk .3s steps(2) infinite}
-@keyframes ivtalk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.4)}}
+/* mascot animation states (photo interviewer) */
+.ivframe{position:relative;width:min(58%,220px);margin-top:16px}
+.ivframe img{width:100%;display:block;border-radius:14px 14px 0 0;animation:ivbreathe 4.6s ease-in-out infinite;transform-origin:50% 92%}
+@keyframes ivbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.014)}}
+.iv.nodding .ivframe img{animation:ivnodp .9s ease-in-out infinite}
+@keyframes ivnodp{0%,100%{transform:translateY(0)}45%{transform:translateY(5px)}}
+.iv.talking .ivframe img{animation:ivtalkp .55s ease-in-out infinite}
+@keyframes ivtalkp{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(2px) scale(1.008)}}
+.ivwave{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:none;gap:3px;align-items:flex-end;height:20px;background:rgba(8,13,24,.55);padding:4px 8px;border-radius:10px}
+.iv.talking .ivwave{display:flex}
+.ivwave i{width:4px;background:var(--gold2);border-radius:2px;animation:ivwv .7s ease-in-out infinite}
+.ivwave i:nth-child(2){animation-delay:.12s}.ivwave i:nth-child(3){animation-delay:.24s}.ivwave i:nth-child(4){animation-delay:.34s}.ivwave i:nth-child(5){animation-delay:.18s}
+@keyframes ivwv{0%,100%{height:5px}50%{height:16px}}
+.ivframe.ivvid{position:absolute;inset:0;width:100%;margin:0}
+.ivwin{aspect-ratio:4/5;width:100%;max-width:400px;margin:0 auto}
+.ivv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 18%;opacity:0;transition:opacity .35s ease}
+.ivv.on{opacity:1}
+.ivframe.ivvid .ivwave{z-index:3}
+
 .meter{height:8px;background:#0b1524;border-radius:5px;overflow:hidden;margin-top:8px}
 .meter i{display:block;height:100%;background:linear-gradient(90deg,#ff7a66,#F2A900,#5fd39a)}
 .dchip{display:inline-block;font-family:var(--mo);font-size:11.5px;border:1px solid var(--line);border-radius:16px;padding:4px 10px;margin:8px 6px 0 0;color:#cdd9ee}
@@ -109,10 +117,22 @@ textarea{min-height:96px;resize:vertical}
   <div class="card">
     <div class="stepk">STEP 1 · YOUR RESUME</div>
     <p style="font-size:13px;color:var(--dim);margin:4px 0 0">The interviewer reads this first — like a real panel. Your intro question, warm-up and technical follow-ups all draw from it.</p>
-    <label>Resume summary</label>
-    <textarea id="resume" placeholder="Projects, internships, tools you've used, final-year project — a few lines is enough…"></textarea>
+    <div class="row" style="margin-top:14px">
+      <label class="btn gh" style="cursor:pointer;margin:0;text-transform:none;letter-spacing:0;font-family:var(--in);font-size:14px">📄 Upload your resume (PDF / DOCX)
+        <input type="file" id="rfile" accept=".pdf,.docx,.txt" style="display:none" onchange="resumeFile(this)"></label>
+      <span id="rnote" style="font-size:12.5px;color:var(--gold2)"></span>
+    </div>
+    <label>Or paste / edit your resume text</label>
+    <textarea id="resume" style="min-height:130px" placeholder="Projects, internships, tools you've used, final-year project…"></textarea>
     <label>Your skills / focus areas (comma separated)</label>
     <input type="text" id="skills" placeholder="e.g. FEA, meshing, CATIA design, injection moulding">
+    <label>Experience level <span id="expnote" style="text-transform:none;letter-spacing:0;color:var(--gold2)"></span></label>
+    <select id="exp">
+      <option value="fresher" selected>Fresher / final-year student</option>
+      <option value="1-3 years">1–3 years experience</option>
+      <option value="3-5 years">3–5 years experience</option>
+      <option value="5+ years">5+ years experience</option>
+    </select>
   </div>
   <div class="card">
     <div class="stepk">STEP 2 · YOUR INTERVIEW</div>
@@ -156,6 +176,7 @@ textarea{min-height:96px;resize:vertical}
         <div class="callstate"><span id="callstate">Ringing…</span> · <span id="calltimer">00:00</span></div></div>
       <span style="font-family:var(--mo);font-size:10.5px;color:var(--dim)" id="callmode"></span>
     </div>
+    <div id="calltips" style="font-size:12.5px;color:var(--dim);border-left:3px solid var(--gold);padding-left:10px;margin-bottom:12px">🎧 <b style="color:#fff">Before we connect:</b> sit in a quiet room, use headphones with a mic if you can, keep water nearby, and speak slowly and clearly — exactly like a real telephonic round.</div>
     <div class="callbody" id="callbody">
       <div class="ivwin iv" id="ivwin"></div>
       <div class="selfwin hide" id="selfwin">
@@ -201,6 +222,37 @@ async function api(payload){
   if(!r.ok){ const e=new Error(d.error||'Something went wrong'); e.code=r.status; throw e; }
   return d;
 }
+/* ---------- resume upload → text extraction (all in the browser) ---------- */
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
+async function resumeFile(inp){
+  const f=inp.files&&inp.files[0]; if(!f) return;
+  $('rnote').textContent='Reading '+f.name+'…';
+  try{
+    let text='';
+    if(/\.pdf$/i.test(f.name)){
+      if(!window.pdfjsLib) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+      for(let p=1;p<=Math.min(pdf.numPages,4);p++){ const tc=await (await pdf.getPage(p)).getTextContent(); text+=tc.items.map(i=>i.str).join(' ')+'\n'; }
+    } else if(/\.docx$/i.test(f.name)){
+      if(!window.mammoth) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+      text=(await mammoth.extractRawText({arrayBuffer:await f.arrayBuffer()})).value;
+    } else { text=await f.text(); }
+    text=text.replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').trim().slice(0,3800);
+    if(text.length<40) throw new Error('short');
+    $('resume').value=text;
+    $('rnote').textContent='✅ Extracted from '+f.name+' — review and edit below.';
+    detectExp(text);
+  }catch(e){ $('rnote').textContent='Could not read that file — please paste the text instead.'; }
+}
+function detectExp(text){
+  const m=/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/i.exec(text||'');
+  if(!m) return;
+  const y=parseFloat(m[1]); let v='fresher';
+  if(y>=5) v='5+ years'; else if(y>=3) v='3-5 years'; else if(y>=1) v='1-3 years';
+  if(v!=='fresher'){ $('exp').value=v; $('expnote').textContent='· detected '+m[0]+' from your resume — adjust if wrong'; }
+}
+
 async function subscribeNow(btn){
   if(btn){ btn.disabled=true; btn.textContent='Opening secure checkout…'; }
   try{
@@ -218,37 +270,24 @@ async function subscribeNow(btn){
   }
 }
 /* ---------- the GearUp interviewer (same mechanic, out of the helmet, in a blazer) ---------- */
+const IV_VIDS={idle:'avatar/iv-idle.mp4',talking:'avatar/iv-talking.mp4',nod:'avatar/iv-nod.mp4',smile:'avatar/iv-smile.mp4'};
+const IV_POSTER={idle:'avatar/pv-idle.jpg',talking:'avatar/pv-talking.jpg',nod:'avatar/pv-nod.jpg',smile:'avatar/pv-smile.jpg'};
+let ivTalkOn=false, nodT=null, ivTmpT=null;
 function ivSVG(){
-  const SK='#b3763e', SKD='#9a6231', HAIR='#17110b', NAVY='#1b2740', NAVYD='#131d30', GOLD='#F2A900', EYE='#0d0d14', LIP='#8a4a30';
-  return `<svg viewBox="28 52 124 150" xmlns="http://www.w3.org/2000/svg" aria-label="GearUp interviewer">
-  <!-- blazer + shirt + tie -->
-  <path d="M38 202 L41 176 Q64 156 90 156 Q116 156 139 176 L142 202 Z" fill="${NAVY}"/>
-  <path d="M76 160 L90 178 L104 160 L106 202 L74 202 Z" fill="#eef2f7"/>
-  <path d="M76 160 L90 178 L69 188 L64 167 Q70 161 76 160 Z" fill="${NAVYD}"/>
-  <path d="M104 160 L90 178 L111 188 L116 167 Q110 161 104 160 Z" fill="#16203a"/>
-  <path d="M86 165 L94 165 L96 171 L90 173 L84 171 Z" fill="${GOLD}"/>
-  <path d="M87 172 L93 172 L97 188 L90 200 L83 188 Z" fill="${GOLD}"/>
-  <path d="M87 172 L93 172 L97 188 L90 200 L83 188 Z" fill="#000" opacity=".12"/>
-  <rect x="119" y="188" width="12" height="6" rx="1" fill="${GOLD}" opacity=".9"/>
-  <!-- head -->
-  <g class="iv-head">
-    <rect x="82" y="146" width="16" height="16" fill="${SKD}"/>
-    <circle cx="61" cy="114" r="5" fill="${SKD}"/><circle cx="119" cy="114" r="5" fill="${SKD}"/>
-    <ellipse cx="90" cy="112" rx="29" ry="31" fill="${SK}"/>
-    <path d="M59 102 Q55 60 90 56 Q125 60 121 102 L117 97 Q116 85 90 85 Q64 85 63 97 Z" fill="${HAIR}"/>
-    <path d="M59 96 Q57 112 62 122 L67 100 Z" fill="${HAIR}"/><path d="M121 96 Q123 112 118 122 L113 100 Z" fill="${HAIR}"/>
-    <path d="M61 108 Q62 151 90 159 Q118 151 119 108 Q116 133 108 140 Q100 151 90 151 Q80 151 72 140 Q64 133 61 108 Z" fill="${HAIR}"/>
-    <path d="M75 131 Q90 126 105 131 Q98 136 90 134 Q82 136 75 131 Z" fill="${HAIR}"/>
-    <g fill="none" stroke="#141018" stroke-width="3.4"><rect x="62" y="103" width="25" height="18" rx="5"/><rect x="93" y="103" width="25" height="18" rx="5"/><line x1="87" y1="109" x2="93" y2="109"/><line x1="62" y1="108" x2="54" y2="110"/><line x1="118" y1="108" x2="126" y2="110"/></g>
-    <g stroke="${HAIR}" stroke-width="4" stroke-linecap="round" fill="none"><path d="M64 100 q9 -2 18 0"/><path d="M98 100 q9 -2 18 0"/></g>
-    <g class="iv-eyes"><circle cx="74.5" cy="113" r="2.9" fill="${EYE}"/><circle cx="105.5" cy="113" r="2.9" fill="${EYE}"/></g>
-    <path class="m-closed" d="M82 141 q8 5 16 0" fill="none" stroke="${LIP}" stroke-width="3" stroke-linecap="round"/>
-    <g class="m-open"><path d="M81 138 q9 10 18 0 q-9 6 -18 0z" fill="#6a2f1e"/><path d="M84.5 140 q4.5 2.5 9 0" fill="none" stroke="#fff" stroke-width="1.8" opacity=".85"/></g>
-  </g></svg>`;
+  return '<div class="ivframe ivvid">'+Object.keys(IV_VIDS).map(k=>
+    '<video class="ivv'+(k==='idle'?' on':'')+'" id="ivv-'+k+'" src="'+IV_VIDS[k]+'" poster="'+IV_POSTER[k]+'" muted loop playsinline preload="auto"></video>'
+  ).join('')+'<div class="ivwave"><i></i><i></i><i></i><i></i><i></i></div></div>';
 }
-function ivTalk(on){ const w=$('ivwin'); if(w) w.classList.toggle('talking',!!on); }
-let nodT=null;
-function ivNodPulse(){ const w=$('ivwin'); if(!w) return; w.classList.add('nodding'); clearTimeout(nodT); nodT=setTimeout(()=>{w.classList.remove('nodding');},1500); }
+function ivShow(k){
+  Object.keys(IV_VIDS).forEach(x=>{ const v=$('ivv-'+x); if(!v) return;
+    if(x===k){ v.classList.add('on'); try{ v.play(); }catch(e){} }
+    else { v.classList.remove('on'); if(x!=='idle'){ try{ v.pause(); }catch(e){} } }
+  });
+}
+function ivTalk(on){ const w=$('ivwin'); if(!w) return; ivTalkOn=!!on; w.classList.toggle('talking',!!on); ivShow(on?'talking':'idle'); }
+function ivListen(on){ if(ivTalkOn) return; ivShow(on?'nod':'idle'); }
+function ivNodPulse(){ if(ivTalkOn) return; ivShow('nod'); clearTimeout(nodT); nodT=setTimeout(()=>{ if(!ivTalkOn) ivShow('idle'); },2200); }
+function ivSmile(){ if(ivTalkOn) return; ivShow('smile'); clearTimeout(ivTmpT); ivTmpT=setTimeout(()=>{ if(!ivTalkOn) ivShow('idle'); },4000); }
 
 /* ---------- telephonic / video-call experience ---------- */
 let callInt=null, callT0=null;
@@ -256,6 +295,7 @@ function callFmt(s){ s=Math.floor(s); return String(Math.floor(s/60)).padStart(2
 function openCall(){
   $('callcard').classList.remove('hide');
   $('ivwin').innerHTML=ivSVG();
+  
   const vid=MODE==='video';
   $('callcard').classList.toggle('videocall',vid);
   $('selfwin').classList.toggle('hide',!vid);
@@ -280,7 +320,7 @@ function beginCall(firstQ){
     $('callstate').textContent='Connected'; $('calldot').classList.add('live');
     callT0=Date.now(); clearInterval(callInt);
     callInt=setInterval(()=>{ const el=$('calltimer'); if(el) el.textContent=callFmt((Date.now()-callT0)/1000); },1000);
-    const greet='Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. Take a breath and settle in — this is practice, so relax. Let us begin.';
+    const greet='Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. A quick tip before we start: make sure you are in a quiet place, speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.';
     speak(greet,()=>speak(firstQ));
   });
 }
@@ -300,21 +340,38 @@ function speak(text,onend){
 }
 
 /* free on-device speech-to-text (Chrome/Edge/Safari) */
-let rec=null, recOn=false;
-function toggleMic(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ $('note2').textContent='Voice input is not supported in this browser — please type.'; return; }
-  if(recOn){ rec.stop(); return; }
-  rec=new SR(); rec.lang='en-IN'; rec.continuous=true; rec.interimResults=true;
-  let base=$('answer').value;
-  rec.onresult=e=>{ let fin='',intr='';
-    for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal)fin+=r[0].transcript+' '; else intr+=r[0].transcript; }
-    if(fin) base=(base+' '+fin).trim();
-    ivNodPulse();
-    $('answer').value=(base+(intr?' '+intr:'')).trim(); };
-  rec.onend=()=>{ if(recT0){recTime+=Date.now()-recT0;recT0=0;} recOn=false; $('micBtn').classList.remove('on'); };
-  rec.onerror=()=>{ recOn=false; $('micBtn').classList.remove('on'); };
-  rec.start(); recOn=true; recT0=Date.now(); $('micBtn').classList.add('on');
+/* High-accuracy voice capture: record real audio, transcribe on the server
+   (OpenAI speech-to-text) — far better than the browser's built-in recognition. */
+let recOn=false, mediaRec=null, recChunks=[], recStream=null, nodInt=null;
+async function toggleMic(){
+  if(recOn){ try{mediaRec.stop();}catch(e){} return; }
+  if(!window.MediaRecorder){ $('note2').textContent='Voice is not supported in this browser — please type.'; return; }
+  try{ recStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); }
+  catch(e){ $('note2').textContent='Please allow microphone access — or type your answer.'; return; }
+  recChunks=[];
+  const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus'
+           :(MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':'');
+  mediaRec=new MediaRecorder(recStream, mime?{mimeType:mime,audioBitsPerSecond:48000}:{});
+  mediaRec.ondataavailable=e=>{ if(e.data&&e.data.size) recChunks.push(e.data); };
+  mediaRec.onstop=async()=>{
+    recOn=false; $('micBtn').classList.remove('on'); clearInterval(nodInt); ivListen(false);
+    if(recT0){ recTime+=Date.now()-recT0; recT0=0; }
+    try{ recStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    const blob=new Blob(recChunks,{type:(mediaRec.mimeType||'audio/webm').split(';')[0]});
+    if(blob.size<1500){ $('note2').textContent='I did not catch that — try again, a little closer to the mic.'; return; }
+    if(blob.size>3800000){ $('note2').textContent='That was a very long take — keep answers under ~3 minutes.'; return; }
+    $('note2').textContent='✍️ Transcribing your answer…';
+    try{
+      const b64=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(blob); });
+      const d=await api({action:'transcribe',session_id:SID,audio:b64,mime:blob.type});
+      const t=(d.text||'').trim();
+      if(t){ $('answer').value=($('answer').value+' '+t).trim(); $('note2').textContent='✅ Captured — edit if needed, then submit.'; }
+      else $('note2').textContent='I heard only silence — try once more.';
+    }catch(e){ $('note2').textContent=e.message||'Transcription failed — please type your answer.'; }
+  };
+  mediaRec.start(); recOn=true; recT0=Date.now(); $('micBtn').classList.add('on');
+  $('note2').textContent='🎙️ Recording… answer fully, then tap the mic again to stop.';
+  ivListen(true);
 }
 
 function showQuestion(d){
@@ -377,7 +434,8 @@ async function startInterview(){
   const skills=$('skills').value.split(',').map(s=>s.trim()).filter(Boolean);
   if(!skills.length){ $('note').textContent='Add at least one skill, e.g. "FEA" or "design".'; return; }
   VOICE=(MODE!=='text');
-  PENDING={skills,difficulty:$('difficulty').value,resume_text:$('resume').value,mode:MODE};
+  detectExp($('resume').value);
+  PENDING={skills,difficulty:$('difficulty').value,resume_text:$('resume').value,mode:MODE,experience:$('exp').value};
   // match practice roles to their profile
   try{
     const jobs=(await (await fetch('coach-jobs.json')).json()).jobs;
@@ -415,7 +473,7 @@ async function doStart(job){
 async function sendAnswer(){
   const a=$('answer').value.trim();
   if(a.length<10){ $('note2').textContent='Give it a proper try — a few sentences at least.'; return; }
-  if(recOn) rec.stop();
+  if(recOn){ $('note2').textContent='Tap the mic to finish recording first — then submit.'; return; }
   $('sendBtn').disabled=true; $('note2').textContent='Evaluating…';
   try{
     const dv=deliveryStats(a);
@@ -423,6 +481,7 @@ async function sendAnswer(){
     d._dv=dv;
     $('note2').textContent='';
     $('feed').insertAdjacentHTML('afterbegin',evalHTML(d.evaluation,d._dv));
+    if((d.evaluation&&d.evaluation.score>=6)) ivSmile(); else ivNodPulse();
     if(d.done){ stopCam(); $('anscard').classList.add('hide'); $('qtext').textContent='Interview complete.'; $('qmeta').textContent=''; if(DEMO&&d.report){ demoReport(d.report); } else { $('qtext').textContent='Interview complete. Building your report…'; await showReport(); } }
     else showQuestion(d);
   }catch(e){ $('note2').textContent=e.message; $('sendBtn').disabled=false; }
@@ -431,9 +490,24 @@ async function showReport(){
   const {report:r}=await api({action:'report',session_id:SID});
   const cls=r.average_score>=7?'s-hi':r.average_score>=5?'s-md':'s-lo';
   let h='<div class="card"><h1 style="font-size:24px">Your interview report</h1>'+
-   '<div class="row" style="margin-top:12px"><span class="score '+cls+'">'+r.average_score+'</span><span style="color:var(--dim)">average across '+r.questions+' answers</span></div></div>';
+   '<div class="row" style="margin-top:12px"><span class="score '+cls+'">'+r.average_score+'</span><span style="color:var(--dim)">average across '+r.questions+' answers</span></div>';
+  if(r.coach&&r.coach.scores){
+    const sc=r.coach.scores, bar=(v,l)=>'<div style="flex:1;min-width:130px"><div style="font-family:var(--mo);font-size:10.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase">'+l+'</div>'+
+      '<div class="bar2" style="margin:6px 0 0"><div class="bt"><div class="bf" style="width:'+(v*10)+'%"></div></div><span style="font-family:var(--mo);font-size:12px;color:var(--gold2)">'+v+'</span></div></div>';
+    h+='<div class="row" style="margin-top:16px;gap:16px">'+bar(sc.technical,'Technical')+bar(sc.communication,'Communication')+bar(sc.confidence,'Confidence')+'</div>';
+  }
+  h+='</div>';
+  if(r.coach){
+    if(r.coach.technical_summary) h+='<div class="card"><b>🔩 Technical feedback</b><p style="color:#c3d1e8;font-size:14px;margin-top:8px">'+esc(r.coach.technical_summary)+'</p></div>';
+    if(r.coach.communication_feedback) h+='<div class="card"><b>🗣️ Voice &amp; language</b><p style="color:#c3d1e8;font-size:14px;margin-top:8px">'+esc(r.coach.communication_feedback)+'</p></div>';
+    if(r.coach.presentation_feedback) h+='<div class="card"><b>🧍 Presence &amp; presentation</b><p style="color:#c3d1e8;font-size:14px;margin-top:8px">'+esc(r.coach.presentation_feedback)+'</p></div>';
+    if(r.coach.practice_plan&&r.coach.practice_plan.length){
+      h+='<div class="card"><b>📅 Your 7-day practice plan</b><ul style="margin:10px 0 0;padding-left:20px;color:#cdd9ee;font-size:14px">'+
+        r.coach.practice_plan.map(x=>'<li style="margin:5px 0">'+esc(x)+'</li>').join('')+'</ul></div>';
+    }
+  }
   if(r.recommendations&&r.recommendations.length){
-    h+='<div class="card"><b>📚 Where to strengthen — from your GearUp books</b>';
+    h+='<div class="card"><b>📚 Study plan — the exact chapters behind your weak answers</b>';
     r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b> — Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
       '<div style="font-size:13px;color:var(--dim);margin:4px 0 8px">Topics: '+rec.topics.slice(0,3).map(esc).join(' · ')+'</div>'+
       '<a href="reader.html?book='+rec.book+'">Open the book →</a> &nbsp;·&nbsp; <a href="/#books">Not yours yet? Get it →</a></div>'; });
