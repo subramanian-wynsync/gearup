@@ -60,6 +60,17 @@ async function retrieve(book, query){
   return any && any.length ? [any[Math.floor(Math.random() * any.length)]] : [];
 }
 
+// Experience level travels inside resume_text as a tag — no schema change needed.
+const EXP_LEVELS = ['fresher', '1-3 years', '3-5 years', '5+ years'];
+const EXP_DESC = {
+  'fresher': 'a FINAL-YEAR or recently graduated engineering student. Calibrate strictly to coursework: easy = fundamentals and definitions; medium = applying one studied concept; hard = a scenario still answerable from strong coursework. NEVER require on-the-job experience.',
+  '1-3 years': 'a junior engineer with 1-3 years of industry experience. Expect fundamentals to be solid; probe how they applied concepts on real parts, basic processes, and lessons from their first projects. Hard questions may involve practical trade-offs they should have met.',
+  '3-5 years': 'an engineer with 3-5 years of experience who owns components end to end. Probe design decisions, cross-functional interfaces (CAE, manufacturing, suppliers), failure investigations and justification of choices. Expect depth, not textbook recitation.',
+  '5+ years': 'a senior engineer with 5+ years of experience. Ask system-level questions: architecture trade-offs, targets cascading, cost-mass-performance balance, mentoring judgement, and lessons from things that went wrong. Textbook answers are not enough at this level.',
+};
+function expOf(s){ const m = /\[\[experience:([^\]]+)\]\]/.exec(s.resume_text || ''); return EXP_LEVELS.includes(m?.[1]) ? m[1] : 'fresher'; }
+function cleanResume(t){ return String(t || '').replace(/^\[\[experience:[^\]]+\]\]\n?/, ''); }
+
 function buildPlan(books, n){
   const plan = [];
   for (let i = 0; i < n; i++) plan.push(books[i % books.length]);
@@ -75,10 +86,10 @@ async function nextQuestion(session){
     const q = await openai(
       'You are a friendly automotive-industry interviewer on a telephonic screening round. The candidate just introduced themselves. Ask ONE easy, warm ice-breaker question about their background — e.g. their favourite project, why they chose this field, or a tool they enjoyed learning. NO deep technical content yet; the goal is to settle their nerves. Return only the question.',
       `Candidate's introduction: ${String(qa[0].answer || '').slice(0, 800)}` +
-      (session.resume_text ? `\nResume: ${session.resume_text.slice(0, 600)}` : '') +
+      (cleanResume(session.resume_text) ? `\nResume: ${cleanResume(session.resume_text).slice(0, 600)}` : '') +
       (session.job && session.job.title ? `\nTarget role: ${session.job.title}` : ''));
     const ctx = 'Easy warm-up ice-breaker on a telephonic round. Evaluate warmth, specificity and clarity — a good answer names something concrete (a project, a tool, a reason) and sounds natural. Do NOT demand technical depth.'
-      + (session.resume_text ? `\nResume for reference: ${session.resume_text.slice(0, 600)}` : '');
+      + (cleanResume(session.resume_text) ? `\nResume for reference: ${cleanResume(session.resume_text).slice(0, 600)}` : '');
     return { question: q, meta: null, context: ctx, is_followup: false, is_warmup: true };
   }
 
@@ -98,10 +109,10 @@ async function nextQuestion(session){
   if (!chunks.length) throw new Error('No study content indexed for ' + book + '. Run the book indexer first.');
   const c = chunks[0];
   const context = `Book: ${BOOK_NAMES[c.book]}\nChapter ${c.chapter_n}: ${c.chapter_title}\nTopic: ${c.topic_title}\n${c.content}`;
-  const resumeBit = session.resume_text ? `\nCandidate background (weave it in when natural): ${session.resume_text.slice(0, 800)}` : '';
+  const resumeBit = cleanResume(session.resume_text) ? `\nCandidate background (weave it in when natural): ${cleanResume(session.resume_text).slice(0, 800)}` : '';
   const jobBit = session.job && session.job.title ? `\nTarget role the candidate is practising for: ${session.job.title} (${session.job.seg || ''}). Role expects: ${(session.job.asks || []).slice(0,5).join('; ')}. Frame the question the way an interviewer for THIS role would.` : '';
   const q = await openai(
-    `You are a senior automotive-industry technical interviewer with 18 years at OEMs. Ask ONE ${session.difficulty} interview question a fresher/junior engineer would realistically face. Use ONLY the supplied reference for the technical substance. Test understanding, not memorisation. Do not reveal the answer or mention the reference. Return only the question.`,
+    `You are a senior automotive-industry technical interviewer with 18 years at OEMs. The candidate is ${EXP_DESC[expOf(session)]} Ask ONE ${session.difficulty} interview question for that level. Use ONLY the supplied reference for the technical substance. Test understanding, not memorisation. Do not reveal the answer or mention the reference. Return only the question.`,
     `Reference:\n${context}${resumeBit}${jobBit}`);
   return { question: q, meta: { book: c.book, book_name: BOOK_NAMES[c.book], chapter_n: c.chapter_n, chapter_title: c.chapter_title, topic_title: c.topic_title }, context, is_followup: false };
 }
@@ -110,6 +121,32 @@ export default async function handler(req, res){
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!OPENAI_KEY) return res.status(500).json({ error: 'Server missing OPENAI_API_KEY.' });
   const body0 = req.body || {};
+
+  // ---------------- VOICE TRANSCRIPTION (server-side, high accuracy) ----------------
+  // Works for both demo and full sessions; validated against an open session id.
+  if (body0.action === 'transcribe') {
+    const sid = String(body0.session_id || '');
+    const b64 = String(body0.audio || '');
+    if (!sid || !b64 || b64.length > 5_600_000)
+      return res.status(400).json({ error: 'Audio missing or too long — keep answers under ~3 minutes.' });
+    const { data: s } = await supabase.from('coach_sessions').select('id,status').eq('id', sid).maybeSingle();
+    if (!s || !['active', 'demo'].includes(s.status)) return res.status(403).json({ error: 'Session not found.' });
+    try {
+      const mime = /^audio\/(webm|mp4|ogg|wav|mpeg)$/.test(body0.mime || '') ? body0.mime : 'audio/webm';
+      const fd = new FormData();
+      fd.append('file', new Blob([Buffer.from(b64, 'base64')], { type: mime }), 'answer.' + mime.split('/')[1]);
+      fd.append('model', process.env.COACH_STT_MODEL || 'gpt-4o-mini-transcribe');
+      fd.append('language', 'en');
+      const r = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST', headers: { Authorization: 'Bearer ' + OPENAI_KEY }, body: fd });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error?.message || 'stt failed');
+      return res.status(200).json({ text: String(d.text || '').trim() });
+    } catch (e) {
+      console.error('transcribe', e);
+      return res.status(500).json({ error: 'Transcription failed — please type your answer.' });
+    }
+  }
 
   // ---------------- FREE DEMO (no login; gated by email, once per email) ----------------
   if (body0.action === 'demo_start') {
@@ -195,8 +232,9 @@ export default async function handler(req, res){
       const ordered = [...books.filter(b => owned.includes(b)), ...books.filter(b => !owned.includes(b))];
       const plan = buildPlan(ordered, DEFAULT_QUESTIONS);
 
+      const experience = EXP_LEVELS.includes(body.experience) ? body.experience : 'fresher';
       const session = { user_id: user.id, email, skills, difficulty, plan, mode, job,
-        resume_text: String(body.resume_text || '').slice(0, 4000), qa: [], status: 'active' };
+        resume_text: '[[experience:' + experience + ']]\n' + String(body.resume_text || '').slice(0, 3900), qa: [], status: 'active' };
       const { data: ins, error } = await supabase.from('coach_sessions').insert(session).select('id').single();
       if (error) throw error;
       await supabase.from('coach_usage').upsert({ email, month: month(), interviews: used + 1, video: vused + (mode === 'video' ? 1 : 0) }, { onConflict: 'email,month' });
@@ -206,7 +244,7 @@ export default async function handler(req, res){
         ? `Let us begin the way a real panel would. Please introduce yourself in about a minute: your background, one or two projects you are proud of, and why you are interested in a ${job.title} role.`
         : 'Let us begin the way a real panel would. Please introduce yourself in about a minute: your background, one or two projects you are proud of, and the kind of role you are looking for.';
       const openerCtx = 'HR-style opener (self-introduction). Evaluate STRUCTURE (present -> past -> future), relevance to the target role, confidence and clarity. Do NOT demand technical depth here. A good answer is 45-90 seconds spoken: who they are, standout project/internship with their specific contribution, and what they want next.'
-        + (session.resume_text ? `\nCandidate background for reference: ${session.resume_text.slice(0, 800)}` : '')
+        + (cleanResume(session.resume_text) ? `\nCandidate background for reference: ${cleanResume(session.resume_text).slice(0, 800)}` : '')
         + (job ? `\nTarget role: ${job.title} (${job.seg || ''})` : '');
       session.qa.push({ question: openerQ, meta: null, context: openerCtx, is_followup: false, is_opener: true });
       await supabase.from('coach_sessions').update({ qa: session.qa }).eq('id', ins.id);
@@ -225,7 +263,7 @@ export default async function handler(req, res){
       const evalRaw = await openai(
         `You are an expert automotive-industry technical interviewer evaluating a candidate's spoken answer. Judge ONLY against the supplied reference. Return ONLY valid JSON:
 {"score":0-10,"feedback":"2-3 sentences, constructive","strengths":[],"improvements":[],"ideal_answer":"concise model answer","language_feedback":"one sentence on grammar/clarity/filler words, kind but honest"}`,
-        `Reference:\n${cur.context}\n\nQuestion: ${cur.question}\nCandidate answer: ${cur.answer}` +
+        `Reference:\n${cur.context}\n\nQuestion: ${cur.question}\nCandidate answer: ${cur.answer}\nCandidate level: ${expOf(s)} — set depth expectations for that level.` +
         (body.delivery && body.delivery.spoken ? `\nSpoken-delivery metrics: ~${body.delivery.wpm || '?'} words/min, ${body.delivery.fillers || 0} filler words. Reflect pace and fillers in language_feedback.` : ''), true);
       cur.evaluation = JSON.parse(evalRaw);
       if (body.delivery) cur.delivery = { wpm: body.delivery.wpm, fillers: body.delivery.fillers, spoken: !!body.delivery.spoken };
@@ -260,6 +298,25 @@ export default async function handler(req, res){
         items: answered.map(q => ({ question: q.question, answer: q.answer, evaluation: q.evaluation, meta: q.meta, is_followup: q.is_followup, delivery: q.delivery || null })),
         recommendations: Object.values(recsMap),
       };
+
+      // Full coaching synthesis: technical + communication + presentation + practice plan
+      try {
+        const spoken = (s.mode || 'text') !== 'text';
+        const dl = answered.map(q => q.delivery).filter(Boolean);
+        const wpmAvg = dl.length ? Math.round(dl.reduce((t, d) => t + (d.wpm || 0), 0) / dl.length) : null;
+        const fillers = dl.reduce((t, d) => t + (d.fillers || 0), 0);
+        const digest = answered.map((q, i) =>
+          `Q${i + 1}${q.is_opener ? ' (intro)' : q.is_warmup ? ' (warm-up)' : ''}: ${q.question}\nAnswer: ${String(q.answer || '').slice(0, 500)}\nScore: ${q.evaluation.score}. Notes: ${q.evaluation.feedback}`).join('\n\n');
+        const coachRaw = await openai(
+          `You are a warm but honest senior interview coach reviewing a full mock interview of a mechanical/automotive engineering candidate (level: ${expOf(s)}). Set expectations for that level. Return ONLY valid JSON:
+{"scores":{"technical":0-10,"communication":0-10,"confidence":0-10},
+"technical_summary":"3-4 sentences: strongest areas, weakest areas, one concrete habit to fix",
+"communication_feedback":"3-4 sentences on voice clarity, pace, sentence construction, vocabulary and language command${'' /* spoken adds metrics */}",
+"presentation_feedback":"2-3 sentences of interview-presence advice: environment (quiet place, headphones), being slow and steady, expressiveness, eye contact and posture for video rounds",
+"practice_plan":["5 short actionable practice items for the next 7 days"]}`,
+          `Interview mode: ${s.mode}${spoken ? ` (spoken). Delivery metrics: average pace ${wpmAvg || '?'} words/min, ${fillers} filler words total.` : ''}\n\n${digest}`, true);
+        report.coach = JSON.parse(coachRaw);
+      } catch (e) { console.error('coach synthesis', e); }
       if (RESEND && s.status === 'finished') {
         try {
           const recHtml = report.recommendations.length
