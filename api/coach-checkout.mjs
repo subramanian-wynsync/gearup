@@ -35,7 +35,7 @@ export default async function handler(req, res){
           unit_amount: PRICE_USD_CENTS,
           recurring: { interval: 'month' },
           product_data: {
-            name: 'GearUp Interview Coach — monthly',
+            name: 'GearUp Interview Coach (monthly)',
             description: 'Up to 50 AI mock interviews a month (8 video), trained on the GearUp engineering books.',
             images: ['https://www.gearup.study/og-image.jpg'],
           },
