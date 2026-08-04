@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Log in</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp: Log in</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -32,7 +32,7 @@ const gu=GearUpAuth(GEARUP_CONFIG.SUPABASE_URL,GEARUP_CONFIG.SUPABASE_ANON_KEY);
 const note=document.getElementById('note');
 gu.getUser().then(u=>{ if(u) location.href='portal.html'; });
 const q=new URLSearchParams(location.search);
-if(q.get('kicked')) note.textContent='Signed out — your account was opened on another device.';
+if(q.get('kicked')) note.textContent='Signed out, your account was opened on another device.';
 if(q.get('welcome')) note.textContent='🎉 Payment received! Check your email for your temporary password, then log in here.';
 if(q.get('reset')) note.textContent='Your password is set. Log in with your email and new password.';
 

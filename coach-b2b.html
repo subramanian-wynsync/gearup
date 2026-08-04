@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Interview Coach for Colleges</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp: Interview Coach for Colleges</title>
 <meta name="description" content="Batch licensing of the GearUp Interview Coach for engineering colleges and placement cells: AI mock interviews built for mechanical & automotive students.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -45,18 +45,18 @@ th{font-family:var(--mo);font-size:10.5px;letter-spacing:.1em;text-transform:upp
 <div class="wrap">
 
 <h1>Give your whole batch an interview coach.</h1>
-<p class="sub">The GearUp Interview Coach runs unlimited-patience AI mock interviews built specifically for <b style="color:#fff">mechanical &amp; automotive engineers</b> — trained on our five engineering books. Placement cells license it per student, per placement season.</p>
+<p class="sub">The GearUp Interview Coach runs unlimited-patience AI mock interviews built specifically for <b style="color:#fff">mechanical &amp; automotive engineers</b>, trained on our five engineering books. Placement cells license it per student, per placement season.</p>
 
 <div class="feat">
-  <div class="f"><b>Real technical depth</b><span>Questions drawn from BIW, Plastics, Design, FEA and CFD — the topics OEM and Tier-1 panels actually ask freshers.</span></div>
+  <div class="f"><b>Real technical depth</b><span>Questions drawn from BIW, Plastics, Design, FEA and CFD, the topics OEM and Tier-1 panels actually ask freshers.</span></div>
   <div class="f"><b>Resume-aware, role-aware</b><span>Each student practises against realistic openings (OEM, Tier-1, EV startup, consultancy) with follow-ups on weak answers.</span></div>
   <div class="f"><b>Voice &amp; video practice</b><span>Spoken interviews with pace and filler-word feedback, plus a camera check for presentation basics.</span></div>
   <div class="f"><b>Measurable outcomes</b><span>You get a usage report: who is practising, how often, and score trends across the batch.</span></div>
 </div>
 
 <div class="card" id="inq">
-  <div class="k">Batch pricing — talk to us</div>
-  <p style="font-size:14px;color:#c3d1e8">Tell us your batch size and timeline and we will come back within a day with a quote. Licenses are activated per student email — students get their own login and a set-password email automatically.</p>
+  <div class="k">Batch pricing, talk to us</div>
+  <p style="font-size:14px;color:#c3d1e8">Tell us your batch size and timeline and we will come back within a day with a quote. Licenses are activated per student email, students get their own login and a set-password email automatically.</p>
   <div class="g2">
     <div><label>Your name *</label><input type="text" id="iname" placeholder="Prof. / Placement Officer name"></div>
     <div><label>College / institution *</label><input type="text" id="icollege" placeholder="e.g. ABC College of Engineering, Chennai"></div>
@@ -88,7 +88,7 @@ th{font-family:var(--mo);font-size:10.5px;letter-spacing:.1em;text-transform:upp
       <div><label>College / batch name *</label><input type="text" id="gcollege" placeholder="e.g. ABC-Chennai-2027"></div>
       <div><label>Months of access</label><select id="gmonths"><option value="3">3</option><option value="6" selected>6</option><option value="9">9</option><option value="12">12</option></select></div>
     </div>
-    <label>Student emails * (paste — commas, spaces or one per line; max 100 per batch)</label>
+    <label>Student emails * (paste, commas, spaces or one per line; max 100 per batch)</label>
     <textarea id="gemails" style="min-height:130px" placeholder="student1@college.edu&#10;student2@college.edu&#10;…"></textarea>
     <label class="switch" style="text-transform:none;letter-spacing:0;margin-top:10px"><input type="checkbox" id="gwelcome" checked> <span>Send each student the welcome + set-password email now</span></label>
     <div class="row" style="margin-top:14px"><button class="btn" id="gbtn" onclick="grantBatch()">Activate licenses →</button></div>
@@ -127,7 +127,7 @@ async function unlock(){
 async function grantBatch(){
   const college=$('gcollege').value.trim(); const emails=$('gemails').value;
   if(!college){ $('gnote').textContent='Give the batch a name (used in reports).'; return; }
-  $('gbtn').disabled=true; $('gnote').textContent='Activating licenses — this can take up to a minute for large batches…';
+  $('gbtn').disabled=true; $('gnote').textContent='Activating licenses, this can take up to a minute for large batches…';
   try{
     const d=await api({action:'grant',key:KEY,college,emails,months:$('gmonths').value,send_welcome:$('gwelcome').checked});
     $('gnote').innerHTML='✅ <b style="color:#fff">'+d.granted+' licenses active</b> until '+new Date(d.active_until).toLocaleDateString()+' ('+d.new_accounts+' new accounts created'+($('gwelcome').checked?', welcome emails sent':'')+').';

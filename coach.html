@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp — Interview Coach</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>GearUp: Interview Coach</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -111,7 +111,7 @@ textarea{min-height:96px;resize:vertical}
 
 <div id="demogate" class="hide">
   <h1>Your AI interviewer, <span style="color:var(--gold)">trained for mechanical &amp; automotive engineers.</span></h1>
-  <p class="sub">Try it free: answer <b>2 real interview questions</b> — typed or by voice — and get scored feedback with the exact chapters to study. No account needed.</p>
+  <p class="sub">Try it free: answer <b>2 real interview questions</b>, typed or by voice, and get scored feedback with the exact chapters to study. No account needed.</p>
   <div class="card">
     <label>Your email (your demo access + feedback summary)</label>
     <input type="text" id="demail" placeholder="you@email.com">
@@ -129,7 +129,7 @@ textarea{min-height:96px;resize:vertical}
   <p class="sub">Questions come from the five GearUp books, adapted to your skills. Answer by typing or speaking; get scored feedback, language tips, and exact chapters to study.</p>
   <div class="card">
     <div class="stepk">STEP 1 · YOUR RESUME</div>
-    <p style="font-size:13px;color:var(--dim);margin:4px 0 0">The interviewer reads this first — like a real panel. Your intro question, warm-up and technical follow-ups all draw from it.</p>
+    <p style="font-size:13px;color:var(--dim);margin:4px 0 0">The interviewer reads this first, like a real panel. Your intro question, warm-up and technical follow-ups all draw from it.</p>
     <div class="row" style="margin-top:14px">
       <label class="btn gh" style="cursor:pointer;margin:0;text-transform:none;letter-spacing:0;font-family:var(--in);font-size:14px">📄 Upload your resume (PDF / DOCX)
         <input type="file" id="rfile" accept=".pdf,.docx,.txt" style="display:none" onchange="resumeFile(this)"></label>
@@ -151,12 +151,12 @@ textarea{min-height:96px;resize:vertical}
     <div class="stepk">STEP 2 · YOUR INTERVIEW</div>
     <label>Interview type</label>
     <div class="row">
-      <span class="mchip on" id="m-text" onclick="setMode('text')">⌨️ Text — typed Q&amp;A</span>
-      <span class="mchip" id="m-voice" onclick="setMode('voice')">📞 Audio — telephonic round</span>
-      <span class="mchip" id="m-video" onclick="setMode('video')">🎥 Video — face the panel</span>
+      <span class="mchip on" id="m-text" onclick="setMode('text')">⌨️ Text, typed Q&amp;A</span>
+      <span class="mchip" id="m-voice" onclick="setMode('voice')">📞 Audio, telephonic round</span>
+      <span class="mchip" id="m-video" onclick="setMode('video')">🎥 Video, face the panel</span>
     </div>
     <label>Difficulty</label>
-    <select id="difficulty"><option value="easy">Easy — warm up</option><option value="medium" selected>Medium — realistic fresher interview</option><option value="hard">Hard — push me</option></select>
+    <select id="difficulty"><option value="easy">Easy, warm up</option><option value="medium" selected>Medium, realistic fresher interview</option><option value="hard">Hard, push me</option></select>
     <div class="row" style="margin-top:18px;justify-content:space-between">
       <button class="btn gh" onclick="showProgress()">📈 My progress</button>
       <button class="btn" id="startBtn" onclick="startInterview()">Start interview →</button>
@@ -167,9 +167,9 @@ textarea{min-height:96px;resize:vertical}
 
 <div id="jobs" class="hide">
   <h1 style="font-size:24px">Roles that match your profile</h1>
-  <p class="sub">Practice against a real-world style opening — the interviewer asks what THIS role would ask. Pick one, or skip for a general interview.</p>
+  <p class="sub">Practice against a real-world style opening, the interviewer asks what THIS role would ask. Pick one, or skip for a general interview.</p>
   <div id="joblist"></div>
-  <div class="row" style="margin-top:8px"><button class="btn gh" onclick="doStart(null)">Skip — general interview →</button></div>
+  <div class="row" style="margin-top:8px"><button class="btn gh" onclick="doStart(null)">Skip, general interview →</button></div>
 </div>
 
 <div id="prog2" class="hide">
@@ -254,16 +254,16 @@ async function resumeFile(inp){
     text=text.replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').trim().slice(0,3800);
     if(text.length<40) throw new Error('short');
     $('resume').value=text;
-    $('rnote').textContent='✅ Extracted from '+f.name+' — review and edit below.';
+    $('rnote').textContent='✅ Extracted from '+f.name+', review and edit below.';
     detectExp(text);
-  }catch(e){ $('rnote').textContent='Could not read that file — please paste the text instead.'; }
+  }catch(e){ $('rnote').textContent='Could not read that file, please paste the text instead.'; }
 }
 function detectExp(text){
   const m=/(\d+(?:\.\d+)?)\s*\+?\s*(?:years?|yrs?)/i.exec(text||'');
   if(!m) return;
   const y=parseFloat(m[1]); let v='fresher';
   if(y>=5) v='5+ years'; else if(y>=3) v='3-5 years'; else if(y>=1) v='1-3 years';
-  if(v!=='fresher'){ $('exp').value=v; $('expnote').textContent='· detected '+m[0]+' from your resume — adjust if wrong'; }
+  if(v!=='fresher'){ $('exp').value=v; $('expnote').textContent='· detected '+m[0]+' from your resume, adjust if wrong'; }
 }
 
 async function subscribeNow(btn){
@@ -278,7 +278,7 @@ async function subscribeNow(btn){
     if(d.url){ location.href=d.url; return; }
     throw new Error(d.error||'Checkout unavailable');
   }catch(e){
-    if(btn){ btn.disabled=false; btn.textContent='Subscribe — $6.99/month →'; }
+    if(btn){ btn.disabled=false; btn.textContent='Subscribe: $6.99/month →'; }
     alert(e.message);
   }
 }
@@ -323,8 +323,8 @@ function openCall(){
   $('ivwin').classList.toggle('audiocall',!vid);
   $('callmode').textContent=vid?'VIDEO ROUND':'TELEPHONIC ROUND';
   $('calltips').innerHTML=vid
-    ? '🎥 <b style="color:#fff">Before we connect:</b> find a quiet, well-lit spot — light on your face, not behind you. Camera at eye level, sit upright, and look into the lens when answering — exactly like a real video panel round.'
-    : '🎧 <b style="color:#fff">Before we connect:</b> sit in a quiet room, use headphones with a mic if you can, keep water nearby, and speak slowly and clearly — exactly like a real telephonic round.';
+    ? '🎥 <b style="color:#fff">Before we connect:</b> find a quiet, well-lit spot, light on your face, not behind you. Camera at eye level, sit upright, and look into the lens when answering, exactly like a real video panel round.'
+    : '🎧 <b style="color:#fff">Before we connect:</b> sit in a quiet room, use headphones with a mic if you can, keep water nearby, and speak slowly and clearly, exactly like a real telephonic round.';
 }
 function ringTone(done){
   try{
@@ -346,8 +346,8 @@ function beginCall(firstQ){
     callT0=Date.now(); clearInterval(callInt);
     callInt=setInterval(()=>{ const el=$('calltimer'); if(el) el.textContent=callFmt((Date.now()-callT0)/1000); },1000);
     const greet=(MODE==='video')
-      ? 'Hello! Welcome to this video round, and thanks for joining. I am your interviewer today from GearUp. A few quick tips before we start: keep the light on your face, sit upright, and look into the camera when you answer. Speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.'
-      : 'Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. A quick tip before we start: make sure you are in a quiet place, speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.';
+      ? 'Hello! Welcome to this video round, and thanks for joining. I am your interviewer today from GearUp. A few quick tips before we start: keep the light on your face, sit upright, and look into the camera when you answer. Speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax, this is practice. Let us begin.'
+      : 'Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. A quick tip before we start: make sure you are in a quiet place, speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax, this is practice. Let us begin.';
     speak(greet,()=>speak(firstQ));
   });
 }
@@ -368,13 +368,13 @@ function speak(text,onend){
 
 /* free on-device speech-to-text (Chrome/Edge/Safari) */
 /* High-accuracy voice capture: record real audio, transcribe on the server
-   (OpenAI speech-to-text) — far better than the browser's built-in recognition. */
+   (OpenAI speech-to-text), far better than the browser's built-in recognition. */
 let recOn=false, mediaRec=null, recChunks=[], recStream=null, nodInt=null;
 async function toggleMic(){
   if(recOn){ try{mediaRec.stop();}catch(e){} return; }
-  if(!window.MediaRecorder){ $('note2').textContent='Voice is not supported in this browser — please type.'; return; }
+  if(!window.MediaRecorder){ $('note2').textContent='Voice is not supported in this browser, please type.'; return; }
   try{ recStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); }
-  catch(e){ $('note2').textContent='Please allow microphone access — or type your answer.'; return; }
+  catch(e){ $('note2').textContent='Please allow microphone access, or type your answer.'; return; }
   recChunks=[];
   const mime=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus'
            :(MediaRecorder.isTypeSupported('audio/mp4')?'audio/mp4':'');
@@ -385,16 +385,16 @@ async function toggleMic(){
     if(recT0){ recTime+=Date.now()-recT0; recT0=0; }
     try{ recStream.getTracks().forEach(t=>t.stop()); }catch(e){}
     const blob=new Blob(recChunks,{type:(mediaRec.mimeType||'audio/webm').split(';')[0]});
-    if(blob.size<1500){ $('note2').textContent='I did not catch that — try again, a little closer to the mic.'; return; }
-    if(blob.size>3800000){ $('note2').textContent='That was a very long take — keep answers under ~3 minutes.'; return; }
+    if(blob.size<1500){ $('note2').textContent='I did not catch that, try again, a little closer to the mic.'; return; }
+    if(blob.size>3800000){ $('note2').textContent='That was a very long take, keep answers under ~3 minutes.'; return; }
     $('note2').textContent='✍️ Transcribing your answer…';
     try{
       const b64=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=rej; fr.readAsDataURL(blob); });
       const d=await api({action:'transcribe',session_id:SID,audio:b64,mime:blob.type});
       const t=(d.text||'').trim();
-      if(t){ $('answer').value=($('answer').value+' '+t).trim(); $('note2').textContent='✅ Captured — edit if needed, then submit.'; }
-      else $('note2').textContent='I heard only silence — try once more.';
-    }catch(e){ $('note2').textContent=e.message||'Transcription failed — please type your answer.'; }
+      if(t){ $('answer').value=($('answer').value+' '+t).trim(); $('note2').textContent='✅ Captured, edit if needed, then submit.'; }
+      else $('note2').textContent='I heard only silence, try once more.';
+    }catch(e){ $('note2').textContent=e.message||'Transcription failed, please type your answer.'; }
   };
   mediaRec.start(); recOn=true; recT0=Date.now(); $('micBtn').classList.add('on');
   $('note2').textContent='🎙️ Recording… answer fully, then tap the mic again to stop.';
@@ -415,7 +415,7 @@ function evalHTML(ev,dv){
    '<p style="margin-top:10px">'+esc(ev.feedback)+'</p>'+
    (ev.strengths&&ev.strengths.length?'<b>What worked</b><ul>'+ev.strengths.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>':'')+
    (ev.improvements&&ev.improvements.length?'<b>Improve</b><ul>'+ev.improvements.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>':'')+
-   (ev.ideal_answer?'<div class="ideal"><b>Model answer — </b>'+esc(ev.ideal_answer)+'</div>':'')+
+   (ev.ideal_answer?'<div class="ideal"><b>Model answer, </b>'+esc(ev.ideal_answer)+'</div>':'')+
    (ev.language_feedback?'<div class="lang">🗣️ '+esc(ev.language_feedback)+'</div>':'')+
    (dv&&dv.spoken?'<div><span class="dchip">🎙️ '+dv.wpm+' words/min'+(dv.wpm<110?' · a bit slow':dv.wpm>170?' · a bit fast':' · good pace')+'</span><span class="dchip">'+dv.fillers+' filler word'+(dv.fillers===1?'':'s')+'</span></div>':'')+'</div>';
 }
@@ -431,9 +431,9 @@ async function initCam(){
       for(let i=0;i<d.length;i+=16){ lum+=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]; }
       lum/=(d.length/16); const pct=Math.min(100,Math.round(lum/1.8));
       $('lightbar').style.width=pct+'%';
-      $('camtip').textContent= lum<55?'💡 Too dark — face a window or lamp.': lum>210?'💡 Overexposed — reduce direct light.':'✓ Lighting looks good. Center yourself and look at the lens while answering.';
+      $('camtip').textContent= lum<55?'💡 Too dark, face a window or lamp.': lum>210?'💡 Overexposed, reduce direct light.':'✓ Lighting looks good. Center yourself and look at the lens while answering.';
     }catch(e){} },1500);
-  }catch(e){ $('note2').textContent='Camera unavailable — continuing in voice mode.'; }
+  }catch(e){ $('note2').textContent='Camera unavailable, continuing in voice mode.'; }
 }
 function stopCam(){ if(camTimer)clearInterval(camTimer); if(camStream){camStream.getTracks().forEach(t=>t.stop());} $('selfwin').classList.add('hide'); endCall(); }
 function deliveryStats(text){
@@ -493,14 +493,14 @@ async function doStart(job){
   }catch(e){
     $('jobs').classList.add('hide'); $('setup').classList.remove('hide'); $('startBtn').disabled=false;
     $('note').innerHTML = e.code===402
-      ? 'You need an active Interview Coach subscription — 50 mock interviews a month. <button class="btn" style="margin-left:8px" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button>'
+      ? 'You need an active Interview Coach subscription: 50 mock interviews a month. <button class="btn" style="margin-left:8px" onclick="subscribeNow(this)">Subscribe: $6.99/month →</button>'
       : esc(e.message);
   }
 }
 async function sendAnswer(){
   const a=$('answer').value.trim();
-  if(a.length<10){ $('note2').textContent='Give it a proper try — a few sentences at least.'; return; }
-  if(recOn){ $('note2').textContent='Tap the mic to finish recording first — then submit.'; return; }
+  if(a.length<10){ $('note2').textContent='Give it a proper try, a few sentences at least.'; return; }
+  if(recOn){ $('note2').textContent='Tap the mic to finish recording first, then submit.'; return; }
   $('sendBtn').disabled=true; $('note2').textContent='Evaluating…';
   try{
     const dv=deliveryStats(a);
@@ -534,11 +534,11 @@ async function showReport(){
     }
   }
   if(r.recommendations&&r.recommendations.length){
-    h+='<div class="card"><b>📚 Study plan — the exact chapters behind your weak answers</b>'+
-      '<p style="font-size:13px;color:var(--dim);margin:6px 0 4px">Your Coach subscription is monthly. The books are different: <b style="color:#fff">one-time cost, lifetime access</b> — interactive chapters, worked examples and thousands of interview Q&amp;A.</p>';
-    r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b> — Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
+    h+='<div class="card"><b>📚 Study plan: the exact chapters behind your weak answers</b>'+
+      '<p style="font-size:13px;color:var(--dim);margin:6px 0 4px">Your Coach subscription is monthly. The books are different: <b style="color:#fff">one-time cost, lifetime access</b>, interactive chapters, worked examples and thousands of interview Q&amp;A.</p>';
+    r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b>, Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
       '<div style="font-size:13px;color:var(--dim);margin:4px 0 8px">Topics: '+rec.topics.slice(0,3).map(esc).join(' · ')+'</div>'+
-      '<a href="reader.html?book='+rec.book+'">Open the book →</a> &nbsp;·&nbsp; <a href="reader.html?book='+rec.book+'&demo=1">Try the demo free →</a> &nbsp;·&nbsp; <a href="/#books">Get it — one-time, lifetime →</a></div>'; });
+      '<a href="reader.html?book='+rec.book+'">Open the book →</a> &nbsp;·&nbsp; <a href="reader.html?book='+rec.book+'&demo=1">Try the demo free →</a> &nbsp;·&nbsp; <a href="/#books">Get it, one-time, lifetime →</a></div>'; });
     h+='</div>';
   }
   h+='<div class="row"><button class="btn" onclick="location.reload()">Practice another interview →</button><a class="btn gh" href="portal.html" style="text-decoration:none">Back to my books</a></div>';
@@ -563,7 +563,7 @@ async function demoStart(){
     $('demoBtn').disabled=false;
     if(e.message==='demo_used'){
       DEMO_EMAIL=email;
-      $('dnote').innerHTML='This email already used its free demo. <a style="color:var(--gold2)" href="login.html">Log in</a> or get the full Coach: <button class="btn" style="margin-left:6px" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button>';
+      $('dnote').innerHTML='This email already used its free demo. <a style="color:var(--gold2)" href="login.html">Log in</a> or get the full Coach: <button class="btn" style="margin-left:6px" onclick="subscribeNow(this)">Subscribe: $6.99/month →</button>';
     } else $('dnote').innerHTML=esc(e.message);
   }
 }
@@ -572,15 +572,15 @@ function demoReport(r){
   let h='<div class="card"><h1 style="font-size:24px">Your demo report</h1>'+
    '<div class="row" style="margin-top:12px"><span class="score '+cls+'">'+r.average_score+'</span><span style="color:var(--dim)">average across your demo answers</span></div></div>';
   if(r.recommendations&&r.recommendations.length){
-    h+='<div class="card"><b>📚 Where to strengthen — from the GearUp books</b>';
-    r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b> — Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
+    h+='<div class="card"><b>📚 Where to strengthen, from the GearUp books</b>';
+    r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b>, Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
       '<div style="margin-top:8px"><a href="demo.html">Try the book demo free →</a> &nbsp;·&nbsp; <a href="/#books">Get the full book →</a></div></div>'; });
     h+='</div>';
   }
   h+='<div class="card" style="border-color:rgba(242,169,0,.45)"><b style="font-family:var(--sg);font-size:18px">Liked your interviewer? 🔧</b>'+
-   '<p style="color:#c3d1e8;margin:8px 0 4px">The full Coach gives you <b style="color:#fff">50 mock interviews a month for $6.99</b> — resume-aware questions, follow-ups, voice mode, and chapter-linked feedback after every session.</p>'+
-   '<p style="color:var(--dim);font-size:13px">Cancel anytime. Your account is created automatically after payment — you will get an email to set your password.</p>'+
-   '<div class="row" style="margin-top:10px"><button class="btn" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button><a class="btn gh" href="/#books" style="text-decoration:none">Explore the books →</a></div></div>';
+   '<p style="color:#c3d1e8;margin:8px 0 4px">The full Coach gives you <b style="color:#fff">50 mock interviews a month for $6.99</b>, resume-aware questions, follow-ups, voice mode, and chapter-linked feedback after every session.</p>'+
+   '<p style="color:var(--dim);font-size:13px">Cancel anytime. Your account is created automatically after payment, you will get an email to set your password.</p>'+
+   '<div class="row" style="margin-top:10px"><button class="btn" onclick="subscribeNow(this)">Subscribe: $6.99/month →</button><a class="btn gh" href="/#books" style="text-decoration:none">Explore the books →</a></div></div>';
   $('ivw').classList.add('hide'); $('rep').classList.remove('hide'); $('rep').innerHTML=h;
   window.scrollTo(0,0);
 }
@@ -591,14 +591,14 @@ function demoReport(r){
     $('gate').classList.add('hide');
     if(justPaid){
       $('demogate').classList.remove('hide');
-      $('dnote').innerHTML='🎉 <b style="color:#fff">Payment received — your Coach is being activated.</b> Check your inbox for the welcome email: it has a button to set your password. Then <a style="color:var(--gold2)" href="login.html">log in here</a> and start your first interview.';
+      $('dnote').innerHTML='🎉 <b style="color:#fff">Payment received, your Coach is being activated.</b> Check your inbox for the welcome email: it has a button to set your password. Then <a style="color:var(--gold2)" href="login.html">log in here</a> and start your first interview.';
       window.scrollTo(0,0);
       return;
     }
     $('demogate').classList.remove('hide'); return;
   }
   $('gate').classList.add('hide'); $('setup').classList.remove('hide');
-  if(justPaid) $('note').innerHTML='🎉 <b style="color:#fff">Subscription active.</b> 50 interviews a month are yours — set your skills above and start.';
+  if(justPaid) $('note').innerHTML='🎉 <b style="color:#fff">Subscription active.</b> 50 interviews a month are yours, set your skills above and start.';
 })();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
