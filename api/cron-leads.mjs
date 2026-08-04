@@ -1,4 +1,4 @@
-// GearUp — lead nurture: follows up with starter-pack subscribers who have not bought yet.
+// GearUp, lead nurture: follows up with starter-pack subscribers who have not bought yet.
 // Day 2: point them at the live preview. Day 6: the full value pitch.
 // Runs daily via Vercel Cron. Buyers are skipped automatically (they get the customer drip instead).
 import { createClient } from '@supabase/supabase-js';
@@ -23,16 +23,19 @@ const STEPS = [
     subject: 'Did the 20 questions help? Here is the next step 🔧',
     build: () => H('How did the 20 questions land?') +
       `<p>A couple of days ago you grabbed my starter pack. If you worked through it, you already know the pattern: interviewers do not want definitions, they want to hear that you understand the idea behind them.</p>
-       <p>That is exactly how I wrote the GearUp books. Each of those 20 questions has a full chapter behind it, with figures, worked examples and practice quizzes that keep score as you read. You can open the free demo right now, no login and no payment: read the first topics in the real reader, take the quiz, and watch the mechanic react.</p>` +
-      btn('Open the free demos →', SITE + '/demo.html') +
+       <p>Here is the fastest way to feel that difference: my new <strong style="color:#fff">AI Interview Coach</strong> will interview you out loud, one telephonic question and one video question, completely free. It scores your answer, coaches your language and presence, and points you to the exact chapter to fix.</p>` +
+      btn('Try a free AI interview →', SITE + '/coach.html') +
+      `<p>Prefer to read first? The book demos are open too, no login and no payment: read the first topics in the real reader and take the quiz.</p>` +
+      btn('Open the free book demos →', SITE + '/demo.html') +
       `<p style="color:#9fb2d4;font-size:13px">Stuck on one of the 20? Reply with the question and I will answer it personally.</p>` },
   { flag: 'd6_sent', day: 6, maxDay: 14,
     subject: 'From 20 questions to 4,000: how readers prepare with GearUp 📘',
     build: () => H('From 20 questions to 4,000') +
       `<p>The starter pack gave you 20 questions. The full GearUp library has more than 4,000, spread across five interactive books and 129 chapters: automotive design, Body in White, plastics and glazing, FEA and CFD.</p>
        <p>They are not theory collections. I wrote them from 18 years as a design, development and supplier quality engineer with Nissan, Mercedes-Benz and Scania, and they read like a game: chapter quizzes, progress tracking, and a mechanic who keeps you company while you study.</p>
-       <p>You can start with one book, and the discount grows as you add more. The complete set of five is $79 with lifetime access, on any device.</p>` +
-      btn('Explore the 5 books →', SITE) +
+       <p>You can start with one book, and the discount grows as you add more. Right now the launch offer puts the complete set of five at $39 with lifetime access, on any device.</p>
+       <p>And when you are ready to practise out loud, the <strong style="color:#fff">AI Interview Coach</strong> gives you 50 mock interviews a month, telephonic and video rounds with a live AI interviewer, for $6.99 a month. That is about 14 cents per interview.</p>` +
+      btn('Explore the books and the Coach →', SITE) +
       `<p style="color:#9fb2d4;font-size:13px">Not sure which book fits your target role? Reply and tell me the role, I will point you to the right one.</p>` },
 ];
 
@@ -51,7 +54,7 @@ export default async function handler(req, res){
   if (process.env.CRON_SECRET && req.headers.authorization !== 'Bearer ' + process.env.CRON_SECRET)
     return res.status(401).send('unauthorized');
 
-  // Emails of existing customers — leads who bought move to the customer drip and are skipped here.
+  // Emails of existing customers, leads who bought move to the customer drip and are skipped here.
   const customers = new Set();
   let page = 1;
   while (page <= 20) {

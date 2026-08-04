@@ -1,12 +1,13 @@
-// GearUp Interview Coach — B2B (colleges) + waitlist endpoint.
+// GearUp Interview Coach, B2B (colleges) + waitlist endpoint.
 // POST { action: ... }
-//   'waitlist' { email, branch, consent }            — public: Electrical/Civil/EV coming-soon list
-//   'inquiry'  { name, college, email, phone, students, message } — public: batch-pricing inquiry
-//   'grant'    { key, college, emails[], months }    — ADMIN: bulk-activate student licenses
-//   'report'   { key, college? }                     — ADMIN: licenses + usage this month
+//   'waitlist' { email, branch, consent }           , public: Electrical/Civil/EV coming-soon list
+//   'inquiry'  { name, college, email, phone, students, message }, public: batch-pricing inquiry
+//   'grant'    { key, college, emails[], months }   , ADMIN: bulk-activate student licenses
+//   'report'   { key, college? }                    , ADMIN: licenses + usage this month
 // Admin actions require key === process.env.B2B_ADMIN_KEY (set it in Vercel; any long
-// random string you generate yourself — treat it like a password).
+// random string you generate yourself, treat it like a password).
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'node:crypto';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const RESEND = process.env.RESEND_API_KEY;
@@ -42,10 +43,10 @@ async function welcomeStudent(email, college, months){
   await sendEmail(email, 'Your college gave you the GearUp Interview Coach 🔧',
     '<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1a2233">'+
     '<h2>Your placement prep just levelled up</h2>'+
-    '<p><b>'+college+'</b> has activated the GearUp Interview Coach for you for <b>'+months+' month'+(months>1?'s':'')+'</b>: AI mock interviews built for mechanical &amp; automotive engineers — resume-aware questions, follow-ups, voice &amp; video practice, and feedback pointing to the exact book chapters to study.</p>'+
+    '<p><b>'+college+'</b> has activated the GearUp Interview Coach for you for <b>'+months+' month'+(months>1?'s':'')+'</b>: AI mock interviews built for mechanical &amp; automotive engineers, resume-aware questions, follow-ups, voice &amp; video practice, and feedback pointing to the exact book chapters to study.</p>'+
     setPw+
     '<p><a href="https://www.gearup.study/coach.html">Start practising → gearup.study/coach.html</a></p>'+
-    '<p style="color:#666;font-size:13px">Questions? Just reply to this email. — Subramanian, GearUp</p></div>');
+    '<p style="color:#666;font-size:13px">Questions? Just reply to this email. Subramanian, GearUp</p></div>');
 }
 
 export default async function handler(req, res){
@@ -79,10 +80,10 @@ export default async function handler(req, res){
       await supabase.from('leads').upsert(
         { email, name: name+' ('+college+')', source: 'b2b-inquiry', consent: true },
         { onConflict: 'email', ignoreDuplicates: true });
-      await sendEmail(OWNER, '🎓 B2B inquiry — '+college,
+      await sendEmail(OWNER, '🎓 B2B inquiry, '+college,
         '<div style="font-family:Georgia,serif;max-width:560px;color:#1a2233"><h2>Batch licensing inquiry</h2>'+
         '<p><b>Name:</b> '+name+'<br><b>College:</b> '+college+'<br><b>Email:</b> '+email+
-        '<br><b>Phone:</b> '+(phone||'—')+'<br><b>Batch size:</b> '+(students||'—')+'</p>'+
+        '<br><b>Phone:</b> '+(phone||'-')+'<br><b>Batch size:</b> '+(students||'-')+'</p>'+
         (message?'<p><b>Message:</b><br>'+message.replace(/</g,'&lt;')+'</p>':'')+
         '<p style="color:#666;font-size:13px">Reply directly to reach them.</p></div>', email);
       return res.status(200).json({ ok: true });
@@ -93,6 +94,52 @@ export default async function handler(req, res){
     if (!KEY || String(b.key || '') !== KEY)
       return res.status(401).json({ error: 'Not authorised.' });
 
+    // ---------------- admin: one-time Coach launch announcement ----------------
+    // { action:'announce', key, leads:true, customers:true, dry:true } → counts only
+    // Sends at most 80 per call (Vercel time limits), click again until remaining is 0.
+    if (action === 'announce'){
+      const SITE = 'https://www.gearup.study';
+      const sig = e => crypto.createHmac('sha256', process.env.CRON_SECRET || 'gearup').update(e).digest('hex').slice(0, 16);
+      const unsub = e => `${SITE}/api/unsubscribe?e=${encodeURIComponent(e)}&s=${sig(e)}`;
+      const rec = new Map();
+      if (b.leads !== false){
+        const { data } = await supabase.from('leads').select('email,unsubscribed').eq('unsubscribed', false).limit(5000);
+        (data || []).forEach(l => l.email && rec.set(l.email.toLowerCase(), 'lead'));
+      }
+      if (b.customers){
+        let page = 1;
+        while (page <= 10){
+          const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+          if (error || !data?.users?.length) break;
+          data.users.forEach(u => { if (u.email) rec.set(u.email.toLowerCase(), 'customer'); });
+          if (data.users.length < 1000) break;
+          page++;
+        }
+      }
+      const { data: logged } = await supabase.from('announce_log').select('email').limit(10000);
+      (logged || []).forEach(r => rec.delete(r.email));
+      const list = [...rec.keys()];
+      if (b.dry) return res.status(200).json({ ok: true, would_send: list.length });
+
+      const launchHtml = email => `<div style="background:#080d18;padding:32px 0;font-family:Arial,Helvetica,sans-serif"><div style="max-width:560px;margin:0 auto;background:#0c1424;border:1px solid #22304a;border-radius:18px;overflow:hidden"><div style="padding:26px 28px 4px"><div style="font-weight:800;font-size:22px;color:#eaf1ff">Gear<span style="color:#C88A4B">Up</span></div></div><div style="padding:4px 28px 6px;color:#c3d1e8;font-size:15px;line-height:1.65">
+        <h1 style="font-size:21px;color:#fff;margin:16px 0 10px">Your AI interviewer is ready 🎙️</h1>
+        <p>Something big just went live on GearUp: an <strong style="color:#fff">AI Interview Coach</strong> built specifically for mechanical and automotive engineers, trained on 18+ years of real interview panels at Nissan, Mercedes-Benz and Scania.</p>
+        <p>It calls you like a real telephonic round, interviews you face to face on video, reads your resume and asks about <em>your</em> projects, digs deeper when an answer is weak, and then coaches you: technical scores, voice and language feedback, presence tips, and the exact book chapters to fix each gap.</p>
+        <p><strong style="color:#fff">Try it free right now:</strong> one telephonic question and one video question, no card and no account needed.</p>
+        <div style="text-align:center;margin:24px 0 8px"><a href="${SITE}/coach.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Take the free AI interview →</a></div>
+        <p>The full Coach is 50 mock interviews a month for $6.99, about 14 cents per interview. And if you have been eyeing the books, the launch offer has all five at half price, one-time payment with lifetime access.</p>
+        <p style="color:#9fb2d4;font-size:13px">Questions? Just reply, it reaches me directly. Subramanian</p>
+      </div><div style="padding:16px 28px 24px;border-top:1px solid #22304a;color:#6f83a6;font-size:12px">GearUp Press · gearup.study · <a href="${unsub(email)}" style="color:#6f83a6">unsubscribe</a></div></div></div>`;
+
+      let sentN = 0;
+      for (const email of list.slice(0, 80)){
+        await sendEmail(email, 'Your AI interviewer is ready: free mock interview inside 🎙️', launchHtml(email));
+        await supabase.from('announce_log').upsert({ email });
+        sentN++;
+      }
+      return res.status(200).json({ ok: true, sent: sentN, remaining: Math.max(0, list.length - 80) });
+    }
+
     // ---------------- admin: bulk grant ----------------
     if (action === 'grant'){
       const college = String(b.college || '').trim().slice(0, 80);
@@ -102,7 +149,7 @@ export default async function handler(req, res){
       emails = [...new Set(emails.map(e => String(e).trim().toLowerCase()).filter(e => EMAIL_RX.test(e)))];
       if (!college) return res.status(400).json({ error: 'College / batch name is required.' });
       if (!emails.length) return res.status(400).json({ error: 'No valid email addresses found.' });
-      if (emails.length > MAX_GRANT) return res.status(400).json({ error: 'Max '+MAX_GRANT+' emails per batch — paste the rest as a second batch.' });
+      if (emails.length > MAX_GRANT) return res.status(400).json({ error: 'Max '+MAX_GRANT+' emails per batch, paste the rest as a second batch.' });
 
       const until = new Date(Date.now() + months * 31 * 86400000).toISOString();
       const now = new Date().toISOString();
