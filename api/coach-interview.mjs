@@ -179,7 +179,7 @@ export default async function handler(req, res){
     cur.answer = String(body0.answer || '').slice(0, 3000);
     const evalRaw = await openai(
       `You are an expert automotive-industry technical interviewer evaluating a candidate's spoken answer. Judge ONLY against the supplied reference. Return ONLY valid JSON:
-{"score":0-10,"feedback":"2-3 sentences, constructive","strengths":[],"improvements":[],"ideal_answer":"concise model answer","language_feedback":"one sentence on grammar/clarity, kind but honest"}`,
+{"score":0-10,"feedback":"2-3 sentences, constructive","strengths":[],"improvements":[],"ideal_answer":"concise model answer","language_feedback":"one sentence on grammar/clarity, kind but honest"}. Write naturally and never use em dashes.`,
       `Reference:\n${cur.context}\n\nQuestion: ${cur.question}\nCandidate answer: ${cur.answer}`, true);
     cur.evaluation = JSON.parse(evalRaw);
     const done = s2.qa.length >= DEMO_QUESTIONS;
@@ -262,7 +262,7 @@ export default async function handler(req, res){
 
       const evalRaw = await openai(
         `You are an expert automotive-industry technical interviewer evaluating a candidate's spoken answer. Judge ONLY against the supplied reference. Return ONLY valid JSON:
-{"score":0-10,"feedback":"2-3 sentences, constructive","strengths":[],"improvements":[],"ideal_answer":"concise model answer","language_feedback":"one sentence on grammar/clarity/filler words, kind but honest"}`,
+{"score":0-10,"feedback":"2-3 sentences, constructive","strengths":[],"improvements":[],"ideal_answer":"concise model answer","language_feedback":"one sentence on grammar/clarity/filler words, kind but honest"}. Write naturally and never use em dashes.`,
         `Reference:\n${cur.context}\n\nQuestion: ${cur.question}\nCandidate answer: ${cur.answer}\nCandidate level: ${expOf(s)} — set depth expectations for that level.` +
         (body.delivery && body.delivery.spoken ? `\nSpoken-delivery metrics: ~${body.delivery.wpm || '?'} words/min, ${body.delivery.fillers || 0} filler words. Reflect pace and fillers in language_feedback.` : ''), true);
       cur.evaluation = JSON.parse(evalRaw);
@@ -313,7 +313,7 @@ export default async function handler(req, res){
 "technical_summary":"3-4 sentences: strongest areas, weakest areas, one concrete habit to fix",
 "communication_feedback":"3-4 sentences on voice clarity, pace, sentence construction, vocabulary and language command${'' /* spoken adds metrics */}",
 "presentation_feedback":"2-3 sentences of interview-presence advice: environment (quiet place, headphones), being slow and steady, expressiveness, eye contact and posture for video rounds",
-"practice_plan":["5 short actionable practice items for the next 7 days — mix technical revision with habit tips like practising answers aloud in front of a mirror daily, recording yourself and listening back, and for video rounds dressing neatly and facing a good light"]}`,
+"practice_plan":["5 short actionable practice items for the next 7 days. Write naturally and never use em dashes anywhere in the JSON values. — mix technical revision with habit tips like practising answers aloud in front of a mirror daily, recording yourself and listening back, and for video rounds dressing neatly and facing a good light"]}`,
           `Interview mode: ${s.mode}${spoken ? ` (spoken). Delivery metrics: average pace ${wpmAvg || '?'} words/min, ${fillers} filler words total.` : ''}\n\n${digest}`, true);
         report.coach = JSON.parse(coachRaw);
       } catch (e) { console.error('coach synthesis', e); }
