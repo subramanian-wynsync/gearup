@@ -176,7 +176,7 @@ textarea{min-height:96px;resize:vertical}
         <div class="callstate"><span id="callstate">Ringing…</span> · <span id="calltimer">00:00</span></div></div>
       <span style="font-family:var(--mo);font-size:10.5px;color:var(--dim)" id="callmode"></span>
     </div>
-    <div id="calltips" style="font-size:12.5px;color:var(--dim);border-left:3px solid var(--gold);padding-left:10px;margin-bottom:12px">🎧 <b style="color:#fff">Before we connect:</b> sit in a quiet room, use headphones with a mic if you can, keep water nearby, and speak slowly and clearly — exactly like a real telephonic round.</div>
+    <div id="calltips" style="font-size:12.5px;color:var(--dim);border-left:3px solid var(--gold);padding-left:10px;margin-bottom:12px"></div>
     <div class="callbody" id="callbody">
       <div class="ivwin iv" id="ivwin"></div>
       <div class="selfwin hide" id="selfwin">
@@ -300,6 +300,9 @@ function openCall(){
   $('callcard').classList.toggle('videocall',vid);
   $('selfwin').classList.toggle('hide',!vid);
   $('callmode').textContent=vid?'VIDEO ROUND':'TELEPHONIC ROUND';
+  $('calltips').innerHTML=vid
+    ? '🎥 <b style="color:#fff">Before we connect:</b> find a quiet, well-lit spot — light on your face, not behind you. Camera at eye level, sit upright, and look into the lens when answering — exactly like a real video panel round.'
+    : '🎧 <b style="color:#fff">Before we connect:</b> sit in a quiet room, use headphones with a mic if you can, keep water nearby, and speak slowly and clearly — exactly like a real telephonic round.';
 }
 function ringTone(done){
   try{
@@ -320,7 +323,9 @@ function beginCall(firstQ){
     $('callstate').textContent='Connected'; $('calldot').classList.add('live');
     callT0=Date.now(); clearInterval(callInt);
     callInt=setInterval(()=>{ const el=$('calltimer'); if(el) el.textContent=callFmt((Date.now()-callT0)/1000); },1000);
-    const greet='Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. A quick tip before we start: make sure you are in a quiet place, speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.';
+    const greet=(MODE==='video')
+      ? 'Hello! Welcome to this video round, and thanks for joining. I am your interviewer today from GearUp. A few quick tips before we start: keep the light on your face, sit upright, and look into the camera when you answer. Speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.'
+      : 'Hello! Thanks for joining, and welcome. I am your interviewer today from GearUp. A quick tip before we start: make sure you are in a quiet place, speak slowly and clearly, and when you finish an answer, tap the microphone to stop recording. Take a breath and relax — this is practice. Let us begin.';
     speak(greet,()=>speak(firstQ));
   });
 }
