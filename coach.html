@@ -278,7 +278,7 @@ async function subscribeNow(btn){
     if(d.url){ location.href=d.url; return; }
     throw new Error(d.error||'Checkout unavailable');
   }catch(e){
-    if(btn){ btn.disabled=false; btn.textContent='Subscribe — $5.99/month →'; }
+    if(btn){ btn.disabled=false; btn.textContent='Subscribe — $6.99/month →'; }
     alert(e.message);
   }
 }
@@ -493,7 +493,7 @@ async function doStart(job){
   }catch(e){
     $('jobs').classList.add('hide'); $('setup').classList.remove('hide'); $('startBtn').disabled=false;
     $('note').innerHTML = e.code===402
-      ? 'You need an active Interview Coach subscription — 50 mock interviews a month. <button class="btn" style="margin-left:8px" onclick="subscribeNow(this)">Subscribe — $5.99/month →</button>'
+      ? 'You need an active Interview Coach subscription — 50 mock interviews a month. <button class="btn" style="margin-left:8px" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button>'
       : esc(e.message);
   }
 }
@@ -534,10 +534,11 @@ async function showReport(){
     }
   }
   if(r.recommendations&&r.recommendations.length){
-    h+='<div class="card"><b>📚 Study plan — the exact chapters behind your weak answers</b>';
+    h+='<div class="card"><b>📚 Study plan — the exact chapters behind your weak answers</b>'+
+      '<p style="font-size:13px;color:var(--dim);margin:6px 0 4px">Your Coach subscription is monthly. The books are different: <b style="color:#fff">one-time cost, lifetime access</b> — interactive chapters, worked examples and thousands of interview Q&amp;A.</p>';
     r.recommendations.forEach(rec=>{ h+='<div class="rec"><b>'+esc(rec.book_name)+'</b> — Chapter '+rec.chapter_n+': '+esc(rec.chapter_title)+
       '<div style="font-size:13px;color:var(--dim);margin:4px 0 8px">Topics: '+rec.topics.slice(0,3).map(esc).join(' · ')+'</div>'+
-      '<a href="reader.html?book='+rec.book+'">Open the book →</a> &nbsp;·&nbsp; <a href="/#books">Not yours yet? Get it →</a></div>'; });
+      '<a href="reader.html?book='+rec.book+'">Open the book →</a> &nbsp;·&nbsp; <a href="reader.html?book='+rec.book+'&demo=1">Try the demo free →</a> &nbsp;·&nbsp; <a href="/#books">Get it — one-time, lifetime →</a></div>'; });
     h+='</div>';
   }
   h+='<div class="row"><button class="btn" onclick="location.reload()">Practice another interview →</button><a class="btn gh" href="portal.html" style="text-decoration:none">Back to my books</a></div>';
@@ -562,7 +563,7 @@ async function demoStart(){
     $('demoBtn').disabled=false;
     if(e.message==='demo_used'){
       DEMO_EMAIL=email;
-      $('dnote').innerHTML='This email already used its free demo. <a style="color:var(--gold2)" href="login.html">Log in</a> or get the full Coach: <button class="btn" style="margin-left:6px" onclick="subscribeNow(this)">Subscribe — $5.99/month →</button>';
+      $('dnote').innerHTML='This email already used its free demo. <a style="color:var(--gold2)" href="login.html">Log in</a> or get the full Coach: <button class="btn" style="margin-left:6px" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button>';
     } else $('dnote').innerHTML=esc(e.message);
   }
 }
@@ -577,9 +578,9 @@ function demoReport(r){
     h+='</div>';
   }
   h+='<div class="card" style="border-color:rgba(242,169,0,.45)"><b style="font-family:var(--sg);font-size:18px">Liked your interviewer? 🔧</b>'+
-   '<p style="color:#c3d1e8;margin:8px 0 4px">The full Coach gives you <b style="color:#fff">50 mock interviews a month for $5.99</b> — resume-aware questions, follow-ups, voice mode, and chapter-linked feedback after every session.</p>'+
+   '<p style="color:#c3d1e8;margin:8px 0 4px">The full Coach gives you <b style="color:#fff">50 mock interviews a month for $6.99</b> — resume-aware questions, follow-ups, voice mode, and chapter-linked feedback after every session.</p>'+
    '<p style="color:var(--dim);font-size:13px">Cancel anytime. Your account is created automatically after payment — you will get an email to set your password.</p>'+
-   '<div class="row" style="margin-top:10px"><button class="btn" onclick="subscribeNow(this)">Subscribe — $5.99/month →</button><a class="btn gh" href="/#books" style="text-decoration:none">Explore the books →</a></div></div>';
+   '<div class="row" style="margin-top:10px"><button class="btn" onclick="subscribeNow(this)">Subscribe — $6.99/month →</button><a class="btn gh" href="/#books" style="text-decoration:none">Explore the books →</a></div></div>';
   $('ivw').classList.add('hide'); $('rep').classList.remove('hide'); $('rep').innerHTML=h;
   window.scrollTo(0,0);
 }

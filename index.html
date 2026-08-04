@@ -58,6 +58,20 @@ nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
 .hero h1 .hl{background:linear-gradient(120deg,#ffd08a,#ff7a45);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p.sub{font-size:clamp(16px,2.2vw,20px);color:#c4d2ea;max-width:600px}
 .hero .cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+/* two-product hero */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:980px;margin:36px auto 0}
+.pcard{background:rgba(12,20,36,.88);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;padding:22px;display:flex;flex-direction:column;text-align:left}
+.pk{font-family:var(--mo);font-size:11px;letter-spacing:.14em;color:var(--gold);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.ptag{font-size:9.5px;color:#0c1424;background:var(--gold);border-radius:12px;padding:2px 9px;letter-spacing:.1em}
+.pshot{width:100%;border-radius:14px;margin:14px 0 12px;border:1px solid var(--line)}
+.pfan{object-fit:contain;background:radial-gradient(90% 90% at 50% 40%,#16233d,#0b1524)}
+.pprice{font-family:var(--sg);font-weight:800;font-size:30px}
+.pprice span{font-size:14px;color:var(--dim);font-weight:600}
+.pmath{font-family:var(--mo);font-size:12px;color:var(--gold2);margin:4px 0 8px}
+.pdesc{font-size:13.5px;color:#c3d1e8;flex:1}
+.prow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pcard .pshot{aspect-ratio:16/13;object-fit:cover;object-position:top}
+@media(max-width:820px){.duo{grid-template-columns:1fr}.pcard .pshot{aspect-ratio:auto;max-height:340px}}
 .hero .btn{font-size:15px;padding:14px 24px}
 .stats{display:flex;gap:30px;margin-top:40px;flex-wrap:wrap}
 .stats .s b{font-family:var(--sg);font-weight:800;font-size:26px;display:block;color:#fff}
@@ -243,21 +257,53 @@ footer .logo{justify-content:center;margin-bottom:12px}
 </div></nav>
 
 <header class="hero" id="top">
-  <canvas id="flow"></canvas><div class="veil"></div>
-  <img class="fan" src="fan_web.png" alt="The GearUp book series" loading="eager">
+  <div class="veil"></div>
   <div class="wrap"><div class="in">
-    <div class="kick">GearUp · Interactive engineering books</div>
-    <h1>Engineer your way <span class="hl">in.</span></h1>
-    <p class="sub">Five interactive books that teach the automotive body, plastics, and the interviews for design, FEA and CFD — written by an engineer, read like a game, on any device.</p>
-    <div class="cta"><button class="btn gold" onclick="scrollTo2('books')">Explore the 5 books →</button><button class="btn" onclick="openPreview('biw')">Try a live preview</button></div>
-    <div class="stats">
-      <div class="s"><b>5</b><span>books</span></div>
-      <div class="s"><b>129</b><span>chapters</span></div>
+    <div class="kick">GearUp · For mechanical &amp; automotive engineers — fresher to 5+ years</div>
+    <h1 style="max-width:900px;margin:0 auto;text-align:center">Learn it with the books. <span class="hl">Face the panel with the AI Coach.</span></h1>
+    <p class="sub" style="text-align:center;max-width:720px;margin:14px auto 0">Interactive engineering books and an AI interviewer trained on them — for placement season, OEM &amp; Tier-1 interviews, EV startups, and admits to top master's programmes.</p>
+    <div class="duo">
+      <div class="pcard">
+        <div class="pk">🎙️ AI INTERVIEW COACH <span class="ptag">MONTHLY · CANCEL ANYTIME</span></div>
+        <img class="pshot" src="hero_coach.jpg" alt="A live GearUp AI video interview" loading="eager">
+        <div class="pprice">$6.99<span>/month</span></div>
+        <div class="pmath">50 mock interviews a month — about <b>14¢ per interview</b></div>
+        <p class="pdesc">Telephonic &amp; video rounds with a live AI interviewer. Upload your resume — it asks about <i>your</i> projects, follows up on weak answers, then scores you on technicals, language and presence.</p>
+        <div class="prow"><a class="btn gold" href="coach.html">Try 2 questions free →</a><a class="btn" href="coach.html">Subscribe →</a></div>
+      </div>
+      <div class="pcard">
+        <div class="pk">📚 THE 5 BOOKS <span class="ptag">ONE-TIME · LIFETIME ACCESS</span></div>
+        <img class="pshot pfan" src="fan_web.png" alt="The five GearUp books" loading="eager">
+        <div class="pprice">from $19<span> · pay once, keep forever</span></div>
+        <div class="pmath">129 interactive chapters · <b>4,000+ interview Q&amp;A</b> · streaks &amp; quizzes</div>
+        <p class="pdesc">Body in White, Plastics &amp; Glazing, Design, FEA and CFD — written by an 18-year automotive engineer. Not PDFs: interactive books you read, explore and get quizzed by.</p>
+        <div class="prow"><button class="btn gold" onclick="scrollTo2('books')">Explore the 5 books →</button><a class="btn" href="demo.html">Read a free demo →</a></div>
+      </div>
+    </div>
+    <div class="stats" style="justify-content:center">
+      <div class="s"><b>2</b><span>ways to get in</span></div>
+      <div class="s"><b>50</b><span>interviews / month</span></div>
       <div class="s"><b>4,000+</b><span>Q&amp;A</span></div>
-      <div class="s"><b>∞</b><span>lifetime access</span></div>
+      <div class="s"><b>∞</b><span>book access</span></div>
     </div>
   </div></div>
 </header>
+
+<section id="coachhow" style="padding-top:54px">
+  <div class="wrap">
+    <div class="sec-h"><div class="k">The AI Interview Coach</div><h2>A real panel. Infinite patience.</h2><p>Every interview runs like the real thing — and ends with feedback no human interviewer has time to give you.</p></div>
+    <div class="steps">
+      <div class="step"><div class="n"></div><h3>Upload your resume</h3><p>PDF or DOCX — the Coach reads it, picks your experience level (fresher to 5+ years) and asks about <i>your</i> projects, exactly like a real panel.</p></div>
+      <div class="step"><div class="n"></div><h3>Choose your round</h3><p>⌨️ Text, 📞 Telephonic — your phone rings, the interviewer greets you, warm-up first — or 🎥 Video, face to face with the AI interviewer, camera and lighting checked.</p></div>
+      <div class="step"><div class="n"></div><h3>Face real questions</h3><p>Drawn from the five GearUp books — the topics OEM and Tier-1 panels actually ask. Weak answer? It digs deeper with a follow-up, just like they would.</p></div>
+      <div class="step"><div class="n"></div><h3>Get the full report</h3><p>Scores for technicals, communication and confidence — plus voice &amp; language coaching, presence tips, a 7-day practice plan, and the exact book chapters to fix each gap.</p></div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:30px;gap:14px">
+      <a class="btn gold" href="coach.html" style="text-decoration:none">Try 2 questions free — no card, no account →</a>
+      <a class="btn" href="coach-b2b.html" style="text-decoration:none">Placement officer? Batch pricing →</a>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="wrap">
@@ -291,7 +337,7 @@ footer .logo{justify-content:center;margin-bottom:12px}
     <div style="max-width:920px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:22px" class="coach-g">
       <div style="background:rgba(17,28,48,.86);border:1px solid var(--line);border-radius:18px;padding:28px">
         <div style="font-family:var(--mo);font-size:11px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase">GearUp Interview Coach</div>
-        <div style="font-family:var(--sg);font-weight:800;font-size:30px;margin:10px 0 2px">$5.99<span style="font-size:15px;color:var(--dim);font-weight:600"> / month · cancel anytime</span></div>
+        <div style="font-family:var(--sg);font-weight:800;font-size:30px;margin:10px 0 2px">$6.99<span style="font-size:15px;color:var(--dim);font-weight:600"> / month · cancel anytime</span></div>
         <ul style="margin:14px 0 6px;padding-left:20px;color:#c3d1e8;font-size:14.5px;line-height:1.9">
           <li><b style="color:#fff">50 mock interviews a month</b> — text, voice, or video (with delivery feedback)</li>
           <li>Resume-aware questions + follow-ups on weak answers, like a real panel</li>
