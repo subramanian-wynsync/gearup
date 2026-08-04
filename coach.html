@@ -111,14 +111,14 @@ textarea{min-height:96px;resize:vertical}
 
 <div id="demogate" class="hide">
   <h1>Your AI interviewer, <span style="color:var(--gold)">trained for mechanical &amp; automotive engineers.</span></h1>
-  <p class="sub">Try it free: answer <b>2 real interview questions</b>, typed or by voice, and get scored feedback with the exact chapters to study. No account needed.</p>
+  <p class="sub">Try it free: <b>one telephonic question and one video question</b>, exactly like the real rounds, with scored feedback and the exact chapters to study. No account needed.</p>
   <div class="card">
     <label>Your email (your demo access + feedback summary)</label>
     <input type="text" id="demail" placeholder="you@email.com">
     <label>Your focus (optional)</label>
     <input type="text" id="dskills" placeholder="e.g. FEA, CATIA design, injection moulding">
     <label class="switch" style="text-transform:none;letter-spacing:0;margin-top:12px"><input type="checkbox" id="dok"> <span style="font-family:var(--in);font-size:12.5px;color:var(--dim)">Send me my demo access and occasional GearUp updates. Unsubscribe anytime. <a href="privacy.html" style="color:var(--gold2)">Privacy Policy</a>.</span></label>
-    <label class="switch" style="text-transform:none;letter-spacing:0;margin-top:6px"><input type="checkbox" id="dvoice"> <span style="font-family:var(--in);font-size:13px;color:var(--dim)">🔊 Voice mode</span></label>
+    <p style="font-size:12.5px;color:var(--dim);margin-top:10px">📞 Question 1 comes as a phone call · 🎥 Question 2 switches on your camera for a video round. Answer by speaking, or type if you prefer.</p>
     <div class="row" style="margin-top:14px"><button class="btn" id="demoBtn" onclick="demoStart()">Try 2 questions free →</button><a href="login.html" style="font-size:13px;color:var(--dim)">Subscriber? Log in →</a></div>
     <div id="dnote" style="font-size:13px;color:var(--gold2);min-height:18px;margin-top:10px"></div>
   </div>
@@ -510,6 +510,13 @@ async function sendAnswer(){
     $('feed').insertAdjacentHTML('afterbegin',evalHTML(d.evaluation,d._dv));
     if((d.evaluation&&d.evaluation.score>=6)) ivSmile(); else ivNodPulse();
     if(d.done){ stopCam(); $('anscard').classList.add('hide'); $('qtext').textContent='Interview complete.'; $('qmeta').textContent=''; if(DEMO&&d.report){ demoReport(d.report); } else { $('qtext').textContent='Interview complete. Building your report…'; await showReport(); } }
+    else if(DEMO && MODE!=='video'){
+      // Demo tour, part 2: switch the same session from the phone call to a video round.
+      MODE='video'; openCall(); initCam();
+      $('callstate').textContent='Connected'; $('calldot').classList.add('live');
+      SKIP_SPEAK_ONCE=true; showQuestion(d);
+      speak('Well done. Now let us switch to a short video round. Keep the light on your face, sit upright, and look into the camera when you answer.', ()=>speak(d.question));
+    }
     else showQuestion(d);
   }catch(e){ $('note2').textContent=e.message; $('sendBtn').disabled=false; }
 }
@@ -550,7 +557,7 @@ async function demoStart(){
   const email=$('demail').value.trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ $('dnote').textContent='Please enter a valid email address.'; return; }
   if(!$('dok').checked){ $('dnote').textContent='Please tick the consent box so we may email you.'; return; }
-  DEMO=true; DEMO_EMAIL=email; VOICE=$('dvoice').checked;
+  DEMO=true; DEMO_EMAIL=email; VOICE=true; MODE='voice';
   $('demoBtn').disabled=true; $('dnote').textContent='Setting up your interviewer…';
   try{
     const skills=$('dskills').value.split(',').map(x=>x.trim()).filter(Boolean);
