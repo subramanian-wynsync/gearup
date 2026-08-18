@@ -249,7 +249,11 @@ footer .logo{justify-content:center;margin-bottom:12px}
 .hero .fan{position:absolute;right:-60px;top:54%;transform:translateY(-50%);width:50%;max-width:700px;z-index:2;pointer-events:none;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
 @media(max-width:1100px){.hero .fan{opacity:.5;right:-140px}}
 @media(max-width:900px){.hero .fan{display:none}}
-</style></head><body>
+</style><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="gearup-restyle.css">
+</head><body>
+<script src="gearup-intro.js"></script>
+
 
 <div id="tools"><div class="tool" style="left:31.8%;top:26.0vh;width:51px;height:51px;opacity:0.11;--d:7.6s;--r:24.7s;--rd:;animation-delay:1.3s"><svg fill="#93a6c6" stroke="#93a6c6" viewBox="0 0 64 64"><path d="M50 6a12 12 0 00-15.6 15.6L10 46l8 8 24.4-24.4A12 12 0 0058 14l-7 7-7-2-2-7z"/></svg></div>
 <div class="tool" style="left:9.9%;top:65.1vh;width:35px;height:35px;opacity:0.23;--d:11.4s;--r:15.2s;--rd:reverse;animation-delay:5.7s"><svg fill="#93a6c6" stroke="#93a6c6" viewBox="0 0 64 64"><path d="M18 8l8 8-4 8 8 8 8-4 8 8-6 14-8 4-24-24-4-8z" fill="none" stroke-width="4"/><circle cx="46" cy="46" r="8" fill="none" stroke-width="4"/></svg></div>
@@ -696,10 +700,4 @@ function toast(m){const t=document.createElement('div');t.textContent=m;t.style.
 })();
 shelfHTML(); syncCart();
 </script>
- <!-- just before </head> -->
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="gearup-restyle.css">
-
-<!-- as the FIRST thing inside <body> -->
-<script src="gearup-intro.js"></script>
 </body></html>

@@ -126,7 +126,24 @@ h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","
      and margin:0 auto, so this needs !important — it is overriding a style
      attribute, not another stylesheet. Nothing else here uses !important
      except the gradient kill. */
-  .hero .in{ max-width:860px; }
+  /* The hero used to sit in a 600px column while every section below ran the
+     full 1180px wrap — which is what made it read as indented. It now uses
+     the same measure as the rest of the page. The headline and standfirst
+     keep their own reading widths; it is the cards and the stat row that
+     wanted the full column. */
+  .hero .in{ max-width:none; }
+  .hero .duo{ max-width:none; margin-left:0; margin-right:0; }
+
+  /* The stat row carries an inline justify-content:center, so it floated in
+     the middle of the widened column instead of starting where the headline
+     and the cards start. Another style-attribute override. */
+  .hero .stats{ justify-content:flex-start !important; }
+
+  /* At the wider card size, .pk's space-between pushed the little gold pill
+     hard up against the interviewer's portrait. Keeping the label and its
+     pill together on the left reads as one unit and leaves the portrait
+     alone. */
+  .hero .pk{ justify-content:flex-start; gap:12px; padding-right:76px; }
   .hero h1{
     text-align:left !important;
     max-width:15ch !important;
