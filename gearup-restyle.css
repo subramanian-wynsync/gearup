@@ -1,0 +1,200 @@
+/* ==========================================================================
+   GearUp — art direction layer
+   --------------------------------------------------------------------------
+   Drop-in stylesheet. Loaded LAST, it overrides the visual layer only.
+   It changes no markup, no section order, no links, no copy and no behaviour.
+   Delete the one <link> line and the site is exactly as it was.
+
+   What it fixes, in order of how much it matters:
+
+   1. THE FONTS WERE NEVER LOADED. index.html asks for "Space Grotesk",
+      "Inter" and "JetBrains Mono" but the page contains no <link> to a font
+      service and no @font-face rule anywhere. I measured it on the live site:
+      a headline set in Space Grotesk renders at exactly the same width as the
+      same string in Arial (435.6px both), and JetBrains Mono matches Courier
+      New (165.6px both). The whole site has been rendering in Arial and
+      Courier New for every visitor. That alone is most of the "this looks
+      generated" feeling — it is a bug, not a matter of taste.
+
+   2. Gradient-filled display type. The single loudest tell.
+   3. One repeated eyebrow, one repeated card, everything centred.
+   4. No texture. The absence of any imperfection is what reads as machine-made.
+   ========================================================================== */
+
+/* --------------------------------------------------------------- 1. TYPE */
+/* Archivo for display: an industrial grotesk with real weight and width,
+   not the geometric sans every generated page ships with.
+   IBM Plex Mono for labels: technical heritage, more character than JetBrains.
+   Inter stays for body — it is the right neutral and there is no reason to
+   swap something that is already doing its job. */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --sg: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --in: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mo: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+
+  /* A second accent, taken from the CFD cover, so gold is not carrying the
+     entire page on its own. */
+  --rust: #E8552D;
+  --ink-2: #b9c9e2;
+}
+
+body{ font-family:var(--in); letter-spacing:-0.005em; }
+
+/* Display type: heavier, tighter, and set with optical sizing so the big
+   sizes get the tracking they need instead of the tracking a body size needs. */
+h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","cv01"; }
+
+.hero h1{
+  font-weight:800;
+  letter-spacing:-0.035em;      /* tighter than the -0.02em default */
+  line-height:0.98;
+  text-shadow:none;             /* the blurred black shadow was doing nothing but softening it */
+}
+
+/* ------------------------------------------------- 2. KILL THE GRADIENT */
+/* .hero h1 .hl was a gold-to-orange gradient clipped to the text. Solid ink
+   with a single accent phrase reads as a decision; a gradient reads as a
+   default. Keeping the class so the markup is untouched. */
+.hero h1 .hl{
+  background:none !important;
+  -webkit-background-clip:border-box !important;
+  background-clip:border-box !important;
+  color:#F0B063 !important;
+  -webkit-text-fill-color:#F0B063;
+}
+
+/* ------------------------------------------- 3. THE EYEBROW, USED LESS */
+/* Was: mono, uppercase, .2–.24em tracking, gold, glowing — above every
+   section. Now quieter and without the glow, so it stops announcing itself
+   eight times down the page. */
+.k, .kick, .sec-h .k{
+  font-family:var(--mo);
+  font-weight:500;
+  letter-spacing:.16em;
+  color:#8B9BB5;
+  text-shadow:none !important;
+}
+/* One gold marker instead of gold text, so the eyebrow reads as a label
+   rather than as another accent surface. */
+.k::before, .kick::before{
+  content:"";
+  display:inline-block;
+  width:14px; height:1px;
+  background:var(--gold);
+  vertical-align:middle;
+  margin-right:10px;
+  transform:translateY(-1px);
+}
+
+/* --------------------------------------------------- 4. BREAK THE AXIS */
+/* The price line is one text node plus a trailing note. As a flex row the
+   note either sits on the baseline beside the figure or drops whole to the
+   next line — instead of breaking mid-phrase, which is what it did once the
+   display face changed width. */
+.pprice{ display:flex; flex-wrap:wrap; align-items:baseline; gap:0; }
+.pprice s{ margin-right:.3em; }
+
+/* Between 900 and 1280 the 1180px wrap is wider than the viewport, so the
+   content was sitting 22px from the edge — fine when it was centred, tight
+   now that it is left-aligned. iPad landscape is exactly this width. */
+@media (min-width: 900px) and (max-width: 1279px){
+  .wrap{ padding:0 40px; }
+}
+
+@media (min-width: 900px){
+  /* Section intros. The markup is section > .wrap > .sec-h > (.k, h2, p),
+     and .sec-h was 640px wide, centred, with centred text. Now it starts at
+     the same left edge as the content below it. */
+  .sec-h{
+    text-align:left;
+    max-width:none;
+    margin:0 0 46px;
+  }
+  .sec-h h2{ max-width:18ch; }
+  .sec-h p { max-width:60ch; }
+
+  /* The hero is display:flex, which quietly turns its .wrap into a
+     shrink-to-fit flex item — so the hero content sat in a 644px block
+     centred on the page while every section below it started at x=152.
+     Full width puts the whole page on one left edge. Desktop only: below
+     900px the hero stays centred, which is right at that size. */
+  .hero .wrap{ width:100%; }
+
+  /* The hero. Both the h1 and the standfirst carry inline text-align:center
+     and margin:0 auto, so this needs !important — it is overriding a style
+     attribute, not another stylesheet. Nothing else here uses !important
+     except the gradient kill. */
+  .hero .in{ max-width:860px; }
+  .hero h1{
+    text-align:left !important;
+    max-width:15ch !important;
+    margin:18px 0 0 !important;
+  }
+  .hero p.sub{
+    text-align:left !important;
+    max-width:56ch !important;
+    margin:18px 0 0 !important;
+  }
+}
+
+/* ---------------------------------------------------- 5. TEXTURE, GRAIN */
+/* Two layers, both fixed, both under the content. A real drafting grid at a
+   believable scale, and a fine film grain. Nothing here is decorative in the
+   "floating shapes" sense — the point is to remove the vacuum-sealed
+   flatness that makes a page feel untouched by a human. */
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(130,175,255,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130,175,255,.055) 1px, transparent 1px),
+    linear-gradient(rgba(130,175,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130,175,255,.028) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 0%, transparent 72%);
+}
+body::after{
+  content:"";
+  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+/* Everything the page already draws sits above both layers. */
+body > *{ position:relative; z-index:2; }
+
+/* ------------------------------------------------ 6. CALM THE SURFACES */
+/* Eight different corner radii were in use (8, 10, 11, 12, 14, 16, 18, 20).
+   Two is a system; eight is whatever each component happened to get. */
+[class*="card"], [class*="panel"], [class*="box"], [class*="tile"],
+.stats > *{ border-radius:14px; }
+.btn, button, a[class*="btn"]{ border-radius:10px; }
+
+/* A hairline that reads as drawn rather than as a default 1px box. */
+[class*="card"], [class*="panel"]{
+  border-color:rgba(150,185,240,.16);
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -24px rgba(0,0,0,.8);
+}
+
+/* --------------------------------------------------- 7. THE STAT ROW */
+/* Big numbers in the display face with tabular figures, so they line up and
+   read as measurements rather than as marketing. */
+.stats{ gap:44px; }
+.stats > * > *:first-child,
+.stats b, .stats strong{
+  font-family:var(--sg);
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-0.03em;
+}
+
+/* ------------------------------------------------------ 8. SELECTION */
+::selection{ background:rgba(240,176,99,.28); color:#fff; }
+
+/* --------------------------------------------------------- 9. MOTION */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important;
+     transition-duration:.001ms !important; }
+}
