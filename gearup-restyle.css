@@ -58,6 +58,7 @@ h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","
    with a single accent phrase reads as a decision; a gradient reads as a
    default. Keeping the class so the markup is untouched. */
 .hero h1 .hl{
+  display:block;                /* each sentence gets its own line */
   background:none !important;
   -webkit-background-clip:border-box !important;
   background-clip:border-box !important;
@@ -96,14 +97,16 @@ h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","
 .pprice{ display:flex; flex-wrap:wrap; align-items:baseline; gap:0; }
 .pprice s{ margin-right:.3em; }
 
-/* Between 900 and 1280 the 1180px wrap is wider than the viewport, so the
+/* Between 768 and 1280 the 1180px wrap is wider than the viewport, so the
    content was sitting 22px from the edge — fine when it was centred, tight
-   now that it is left-aligned. iPad landscape is exactly this width. */
-@media (min-width: 900px) and (max-width: 1279px){
+   now that it is left-aligned. iPad, both orientations, is in this band. */
+@media (min-width: 768px) and (max-width: 1279px){
   .wrap{ padding:0 40px; }
 }
 
-@media (min-width: 900px){
+/* The whole left-aligned, full-measure treatment starts at 768 — an iPad
+   in portrait. Below that, on phones, centred is still the right answer. */
+@media (min-width: 768px){
   /* Section intros. The markup is section > .wrap > .sec-h > (.k, h2, p),
      and .sec-h was 640px wide, centred, with centred text. Now it starts at
      the same left edge as the content below it. */
@@ -118,8 +121,8 @@ h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","
   /* The hero is display:flex, which quietly turns its .wrap into a
      shrink-to-fit flex item — so the hero content sat in a 644px block
      centred on the page while every section below it started at x=152.
-     Full width puts the whole page on one left edge. Desktop only: below
-     900px the hero stays centred, which is right at that size. */
+     Full width puts the whole page on one left edge. Below 768px the hero
+     stays centred, which is right on a phone. */
   .hero .wrap{ width:100%; }
 
   /* The hero. Both the h1 and the standfirst carry inline text-align:center
@@ -144,15 +147,31 @@ h1, h2, h3, .hero h1, .wm{ font-family:var(--sg); font-feature-settings:"ss01","
      pill together on the left reads as one unit and leaves the portrait
      alone. */
   .hero .pk{ justify-content:flex-start; gap:12px; padding-right:76px; }
+  /* The headline is one sentence plus one accented sentence. Making the
+     accent a block puts each sentence on its own line, which is how the
+     line breaks were always meant to fall — "books. Face the" mid-line was
+     an accident of the box being 690px wide.
+
+     The size is tied to the column rather than fixed, so the second line
+     fills it at every width instead of only at 1440. The divisor comes from
+     a measurement, not a guess: "Face the panel with the AI Coach." in
+     Archivo 800 at this tracking is 15.335px wide per 1px of font-size, so
+     dividing by 15.9 leaves about 4% of slack — enough that a scrollbar or
+     a hinting difference can never tip it onto a third line. */
   .hero h1{
     text-align:left !important;
-    max-width:15ch !important;
+    max-width:none !important;
     margin:18px 0 0 !important;
+    font-size:clamp(44px, calc((100vw - 88px) / 15.9), 71px);
   }
+
+  /* Two lines instead of three, at a size that suits the wider measure. */
   .hero p.sub{
     text-align:left !important;
-    max-width:56ch !important;
-    margin:18px 0 0 !important;
+    max-width:min(100%, 940px) !important;
+    margin:20px 0 0 !important;
+    font-size:clamp(16.5px, 1.45vw, 21px);
+    text-wrap:balance;
   }
 }
 
@@ -198,7 +217,7 @@ body > *{ position:relative; z-index:2; }
 /* --------------------------------------------------- 7. THE STAT ROW */
 /* Big numbers in the display face with tabular figures, so they line up and
    read as measurements rather than as marketing. */
-.stats{ gap:44px; }
+@media (min-width: 768px){ .stats{ gap:44px; } }
 .stats > * > *:first-child,
 .stats b, .stats strong{
   font-family:var(--sg);
