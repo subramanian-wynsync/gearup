@@ -246,9 +246,13 @@ async function boot(){
 }
 // --- on-device book cache (IndexedDB): download once, then re-open with no data ---
 const GB_CACHE_V=1;
+// Bump a book's number whenever its file in Supabase storage is replaced, so every reader's device
+// downloads the new edition once (the cached copy is ignored). Books not listed stay at version 1.
+const GB_BOOK_V={design:2, fea:2, plastics:2, biw:2};
+const gbVer=id=>GB_BOOK_V[id]||GB_CACHE_V;
 function gbIdbOpen(){return new Promise((res,rej)=>{try{const q=indexedDB.open('gearup-books',1);q.onupgradeneeded=()=>{try{q.result.createObjectStore('books');}catch(_){}};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);}catch(e){rej(e);}});}
-async function gbCacheGet(id){try{const db=await gbIdbOpen();return await new Promise((res)=>{const rq=db.transaction('books','readonly').objectStore('books').get('b:'+id);rq.onsuccess=()=>{const v=rq.result;res(v&&v._v===GB_CACHE_V?v.data:null);};rq.onerror=()=>res(null);});}catch(e){return null;}}
-async function gbCacheSet(id,data){try{const db=await gbIdbOpen();await new Promise((res)=>{const rq=db.transaction('books','readwrite').objectStore('books').put({_v:GB_CACHE_V,at:Date.now(),data:data},'b:'+id);rq.onsuccess=()=>res();rq.onerror=()=>res();});}catch(e){}}
+async function gbCacheGet(id){try{const db=await gbIdbOpen();return await new Promise((res)=>{const rq=db.transaction('books','readonly').objectStore('books').get('b:'+id);rq.onsuccess=()=>{const v=rq.result;res(v&&v._v===gbVer(id)?v.data:null);};rq.onerror=()=>res(null);});}catch(e){return null;}}
+async function gbCacheSet(id,data){try{const db=await gbIdbOpen();await new Promise((res)=>{const rq=db.transaction('books','readwrite').objectStore('books').put({_v:gbVer(id),at:Date.now(),data:data},'b:'+id);rq.onsuccess=()=>res();rq.onerror=()=>res();});}catch(e){}}
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 boot();
 </script>
