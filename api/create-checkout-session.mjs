@@ -23,12 +23,21 @@ export default async function handler(req, res) {
 
     // Currency follows the visitor's country (same rule as /api/pricing, so the price shown is the price charged).
     const currency = currencyForCountry(req.headers['x-vercel-ip-country']);
-    const q = quote(ids, currency);
 
     // If the buyer is signed in, tie the purchase to their account.
     let user = null;
     const token = (req.headers.authorization || '').replace('Bearer ', '');
     if (token) { try { const { data } = await supabase.auth.getUser(token); user = data?.user || null; } catch {} }
+
+    // Never charge a signed-in reader again for an i-Book they already own.
+    if (user) {
+      const { data: pur } = await supabase.from('purchases').select('book_id').eq('user_id', user.id);
+      const owned = new Set((pur || []).map(r => r.book_id));
+      if (owned.has('bundle')) ALL.forEach(id => owned.add(id));
+      ids = ids.filter(id => !owned.has(id));
+      if (!ids.length) return res.status(400).json({ error: 'You already own these i-Books. Open them from My i-Books.' });
+    }
+    const q = quote(ids, currency);
 
     const origin = req.headers.origin || (req.headers.host ? 'https://' + req.headers.host : '');
 

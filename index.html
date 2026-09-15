@@ -584,6 +584,8 @@ section,[id]{scroll-margin-top:64px}
 #rgNote.ok{color:var(--grn)}
 .signedin{background:rgba(22,163,74,.07);border:1px solid rgba(22,163,74,.3);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;margin-bottom:16px;color:#14532d}
 .linkrow{font-size:13px;color:var(--dim);text-align:center}
+
+.book .price.owned{font-size:15px;color:var(--grn)}
 </style>
 </head><body>
 <script src="gearup-intro.js"></script>
@@ -864,6 +866,7 @@ section,[id]{scroll-margin-top:64px}
 
 <script>
 const D={"books":[{"id":"biw","order":1,"title":"Body in White","sub":"The complete guide to automotive body design","tier":"Reference","acc":"#C88A4B","acc2":"#e0a668","cov":"Body in White","meta":"40 chapters · 107 figures · the design of the automotive body","chaps":40},{"id":"plastics","order":2,"title":"Automotive Plastics & Glazing","sub":"Interior, exterior & glazing polymer design","tier":"Reference","acc":"#8257E6","acc2":"#a98bff","cov":"Plastics & Glazing","meta":"40 chapters · 142 figures · interior, exterior & glass","chaps":40},{"id":"design","order":3,"title":"Cracking the Automotive Design Interview","sub":"Mechanical → automotive design engineer","tier":"Interview","acc":"#E8552D","acc2":"#ff6a3d","cov":"Automotive Design","meta":"15 chapters · 1,300+ interview Q&A · gamified quizzes","chaps":15},{"id":"fea","order":4,"title":"Cracking the FEA & Simulation Interview","sub":"Become a simulation (CAE) engineer","tier":"Interview","acc":"#0FA69A","acc2":"#3fd8cb","cov":"FEA & Simulation","meta":"13 chapters · 1,300+ interview Q&A · gamified quizzes","chaps":13},{"id":"cfd","order":5,"title":"The Complete CFD Engineer","sub":"From first principles to CFD job-ready","tier":"Interview","acc":"#2F6FED","acc2":"#7fa8ff","cov":"CFD Engineer","meta":"21 chapters · 1,500 Q&A · 206 diagrams","chaps":21}]};
+const OWNED=new Set();
 const CART=new Set();
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 function scrollTo2(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
@@ -885,9 +888,12 @@ function shelfHTML(){
      </div>
      <div class="bd">
        <h3>${esc(b.title)}</h3><div class="sb">${esc(b.sub)}</div>${u.desc?`<p class="ds">${esc(u.desc)}</p>`:''}<div class="mt">${esc(b.meta)}</div>
-       <div class="row"><div class="price">${money(GU_PRICING.price(b.id))}<span class="full">lifetime access</span></div>
+       <div class="row">${OWNED.has(b.id)
+         ? `<div class="price owned">✓ In your library<span class="full">lifetime access</span></div>
+         <a class="btn gold sm" href="reader.html?book=${b.id}">Open i-Book →</a>`
+         : `<div class="price">${money(GU_PRICING.price(b.id))}<span class="full">lifetime access</span></div>
          <button class="btn sm fr" onclick="freeRead('${b.id}')">2 free chapters</button>
-         <button class="btn gold sm" onclick="addCart('${b.id}')">Buy</button></div>
+         <button class="btn gold sm" onclick="addCart('${b.id}')">Buy</button>`}</div>
      </div>
    </div>`;}).join('');
 }
@@ -1108,7 +1114,12 @@ shelfHTML(); syncCart();
 function money(minor){ return GU_PRICING.fmt(minor); }
 function moneyWas(b){ return money(GU_PRICING.price(b.id)); }
 function cartTotal(){ const q=GU_PRICING.quote([...CART]); return {sum:q.sum,total:q.total,discount:q.discount}; }
-function renderBundle(){ const q=GU_PRICING.quote(D.books.map(b=>b.id));
+function renderBundle(){ const left=D.books.map(b=>b.id).filter(id=>!OWNED.has(id)); const q=GU_PRICING.quote(left);
+  const bun=document.getElementById('bundle'); if(bun) bun.hidden=(left.length===0);
+  if(OWNED.size&&left.length){ const h=bun.querySelector('h3'); if(h) h.textContent=left.length===1?'Complete your library':'Complete your library · '+Math.round(q.discount*100)+'% off';
+    const bp=bun.querySelector('.l p'); if(bp) bp.textContent=left.map(id=>(D.books.find(b=>b.id===id)||{}).title).join(' · ')+': lifetime access on any device.'; const bb=bun.querySelector('.r .btn'); if(bb) bb.firstChild.textContent='Get the remaining '+(left.length===1?'i-Book ':left.length+' i-Books ');
+    const s=document.getElementById('bSum'), t=document.getElementById('bTot'), v=document.getElementById('bSave');
+    if(s) s.textContent=q.saved?money(q.sum):''; if(t) t.textContent=money(q.total); if(v) v.textContent=q.saved?('You save '+money(q.saved)+' ('+Math.round(q.discount*100)+'%)'):'Lifetime access'; return; }
   const s=document.getElementById('bSum'), t=document.getElementById('bTot'), v=document.getElementById('bSave');
   if(s) s.textContent=money(q.sum); if(t) t.textContent=money(q.total); if(v) v.textContent='You save '+money(q.saved)+' (30%)'; }
 const SB_KEY='sb-pzcitptxyftlrkvvpuji-auth-token';
@@ -1155,6 +1166,9 @@ async function goToStripeCheckout(items){ if(!items||!items.length){ toast('Your
   if(sessionToken()){ const n=document.getElementById('navAuth'); if(n) n.textContent='My i-Books';
     const si=document.getElementById('signedIn'); if(si) si.hidden=false; }
   renderBundle();
+  if(sessionToken()){ guAuth().then(gu=>gu.ownedBooks()).then(o=>{ (o||[]).forEach(id=>OWNED.add(id)); if(OWNED.size){ [...CART].forEach(id=>{ if(OWNED.has(id)) CART.delete(id); }); shelfHTML(); renderBundle(); syncCart(); } }).catch(()=>{}); }
+  const _addCart=addCart; addCart=function(id){ if(OWNED.has(id)){ toast('You already own this i-Book'); return; } _addCart(id); };
+  buyBundle=function(){ D.books.forEach(b=>{ if(!OWNED.has(b.id)) CART.add(b.id); }); syncCart(); renderCart(); openCart(); };
   GU_PRICING.ready.then(()=>{ shelfHTML(); renderBundle(); syncCart(); if(document.getElementById('cartDrawer').classList.contains('on')) renderCart(); });
 })();
 
