@@ -69,19 +69,22 @@ function packHTML(unsubUrl){
       body += `<p style="margin:10px 0 2px"><b style="color:#fff">${q}</b></p><p style="margin:0 0 8px;color:#c3d1e8">${a}</p>`;
     });
   }
-  body += `<h2 style="font-size:16px;color:#e0a668;margin:26px 0 6px">Your free demo access</h2>
-  <p>Reading answers is one thing. The GearUp books are interactive: quizzes that score you as you read, a mechanic who reacts to your answers, progress that saves. Try the real reader now, no login needed:</p>
-  <div style="text-align:center;margin:18px 0 6px"><a href="${SITE}/demo.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Open the free demos →</a></div>`;
-  body += `<p style="margin-top:22px">And one more thing, brand new: my <strong style="color:#fff">AI Interview Coach</strong> can interview you out loud, one telephonic question and one video question, completely free. It scores your answer, coaches your language and presence, and shows the exact chapter to study. Try it once and you will see what a real panel feels like.</p>
-  <div style="text-align:center;margin:18px 0 6px"><a href="${SITE}/coach.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Try a free AI interview →</a></div>
-  <p style="margin-top:22px">Every one of the 20 questions has a full chapter behind it in the GearUp books, with worked examples, figures and 4,000+ interview questions across the five volumes. You can try a live preview free on the site.</p>
+  body += `<h2 style="font-size:16px;color:#e0a668;margin:26px 0 6px">Read 2 chapters of every i-Book, free</h2>
+  <p>Reading answers is one thing. The GearUp i-Books are interactive: real OEM figures, interview Q&amp;A after every topic, quizzes that score you and progress that saves. Create a free reader account and the first 2 chapters of all five i-Books are yours:</p>
+  <div style="text-align:center;margin:18px 0 6px"><a href="${SITE}/register.html" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Read 2 free chapters →</a></div>
+  <p style="margin-top:22px">Want to practise answering out loud? Our sister product <a href="https://wynsync.tech/education/wynrise" style="color:#e0a668">WynRise</a> runs AI mock interviews with a full scorecard.</p>
+  <p style="margin-top:22px">Every one of the 20 questions has a full chapter behind it in the GearUp books, with worked examples, figures and 4,000+ interview questions across the five volumes. The first 2 chapters of every i-Book are free with a reader account.</p>
   <div style="text-align:center;margin:24px 0 8px"><a href="${SITE}" style="display:inline-block;background:#e0a668;color:#1c1206;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:10px">Explore the 5 books →</a></div>
   <p style="color:#9fb2d4;font-size:13px">Questions about anything here? Just hit reply, it comes straight to me.</p>`;
   return `<div style="background:#080d18;padding:32px 0;font-family:Arial,Helvetica,sans-serif"><div style="max-width:560px;margin:0 auto;background:#0c1424;border:1px solid #22304a;border-radius:18px;overflow:hidden"><div style="padding:26px 28px 4px"><div style="font-weight:800;font-size:22px;color:#eaf1ff">Gear<span style="color:#C88A4B">Up</span></div></div><div style="padding:4px 28px 6px;color:#c3d1e8;font-size:15px;line-height:1.65">${body}</div><div style="padding:16px 28px 24px;border-top:1px solid #22304a;color:#6f83a6;font-size:12px">GearUp Press · gearup.study · <a href="${unsubUrl}" style="color:#6f83a6">unsubscribe</a></div></div></div>`;
 }
 
+import registerHandler from './_lib/register.mjs';
+
 export default async function handler(req, res){
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  // Free reader account (POST { action:'register', ... }) lives here to stay within the Hobby plan's function limit.
+  if ((req.body || {}).action === 'register') return registerHandler(req, res);
   try {
     let { email, name } = req.body || {};
     email = String(email || '').trim().toLowerCase();

@@ -24,13 +24,15 @@ input:focus{outline:none;border-color:#C88A4B}
   <button class="btn" id="go">Log in →</button>
   <div id="note"></div>
   <button class="link" id="forgot">Forgot your password? Reset it</button>
+  <p style="margin-top:14px;font-size:13px">New to GearUp? <a href="register.html" style="color:#e0a668">Create a free account</a> and read 2 chapters of every i-Book.</p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script><script src="auth.js"></script>
 <script>
 const gu=GearUpAuth(GEARUP_CONFIG.SUPABASE_URL,GEARUP_CONFIG.SUPABASE_ANON_KEY);
 const note=document.getElementById('note');
-gu.getUser().then(u=>{ if(u) location.href='portal.html'; });
+const NX=(q=>{const n=q.get('next')||'';return /^[a-z0-9_-]+\.html(\?[^#]*)?$/i.test(n)?n:'portal.html';})(new URLSearchParams(location.search));
+gu.getUser().then(u=>{ if(u) location.href=NX; });
 const q=new URLSearchParams(location.search);
 if(q.get('kicked')) note.textContent='Signed out, your account was opened on another device.';
 if(q.get('welcome')) note.textContent='🎉 Payment received! Check your email for your temporary password, then log in here.';
@@ -43,7 +45,7 @@ document.getElementById('go').onclick=async()=>{
   note.textContent='Logging in…';
   const {error}=await gu.sb.auth.signInWithPassword({email,password});
   if(error){ note.textContent='Error: '+error.message; }
-  else { location.href='portal.html'; }
+  else { location.href=NX; }
 };
 document.getElementById('password').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('go').click(); });
 

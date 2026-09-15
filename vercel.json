@@ -1,4 +1,12 @@
-{ "crons": [
-  { "path": "/api/cron-emails", "schedule": "0 9 * * *" },
-  { "path": "/api/cron-leads",  "schedule": "30 9 * * *" }
-] }
+{
+  "crons": [
+    { "path": "/api/cron-emails", "schedule": "0 9 * * *" },
+    { "path": "/api/cron-leads",  "schedule": "30 9 * * *" }
+  ],
+  "redirects": [
+    { "source": "/coach", "destination": "https://wynsync.tech/education/wynrise", "permanent": false },
+    { "source": "/coach.html", "destination": "https://wynsync.tech/education/wynrise", "permanent": false },
+    { "source": "/coach-b2b", "destination": "https://wynsync.tech/education/wynrise", "permanent": false },
+    { "source": "/coach-b2b.html", "destination": "https://wynsync.tech/education/wynrise", "permanent": false }
+  ]
+}

@@ -160,9 +160,9 @@ function renderNav(){ const el=document.getElementById('chlist'); el.innerHTML=D
   '<div class="chrow'+(i===S.ch?' on':'')+(S.done[i]?' done':'')+'" onclick="openChapter('+i+')"><span class="cn">'+(c.n||i+1)+'</span><span class="ct">'+esc(c.title)+'</span><span class="dot">'+(S.done[i]?'✓':'')+'</span></div>').join(''); }
 
 function openChapter(i){ S.ch=i; const c=D.chapters[i]; const el=document.getElementById('content');
-  if(DEMO&&c.locked){ el.innerHTML='<div class="chead"><div class="k">Chapter '+(c.n||i+1)+' · locked in the free demo</div><h1>'+esc(c.title)+'</h1></div>'
+  if((DEMO||SAMPLE)&&c.locked){ el.innerHTML='<div class="chead"><div class="k">Chapter '+(c.n||i+1)+' · part of the full i-Book</div><h1>'+esc(c.title)+'</h1></div>'
     +'<div class="why" style="text-align:center;padding:28px"><div class="bl">Unlock the full i-Book</div><p style="margin:10px 0 18px">This chapter is part of the full <b>'+esc(D.title||'book')+'</b>: every chapter, figure, interview Q&amp;A and quiz, with lifetime access on laptop and phone.</p>'
-    +'<a class="btn gold" style="text-decoration:none;display:inline-block" href="/#books">Get the full i-Book →</a></div>'
+    +'<a class="btn gold" style="text-decoration:none;display:inline-block" href="portal.html?buy='+encodeURIComponent(BOOK)+'">Unlock the full i-Book →</a></div>'
     +'<div class="chnav"><button class="btn" onclick="openChapter('+Math.max(0,i-1)+')" '+(i===0?'disabled':'')+'>← Previous</button><button class="btn gold" onclick="openChapter('+Math.min(D.chapters.length-1,i+1)+')" '+(i===D.chapters.length-1?'disabled':'')+'>Next chapter →</button></div>';
     S.ch=i; renderNav(); document.getElementById('rnav').classList.remove('on'); window.scrollTo(0,0); document.querySelector('.rcontent').scrollTop=0; return; }
   let h='<div class="chead"><div class="k">Chapter '+(c.n||i+1)+' · '+ (c.topics||[]).length +' topics</div><h1>'+esc(c.title)+'</h1></div>';
@@ -196,31 +196,37 @@ function answer(ci,qi,oi){ if(S.answered[ci]&&S.answered[ci][qi]!=null) return; 
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
 function overallPct(){ const done=Object.keys(S.done).filter(k=>S.done[k]).length; return Math.round(done/D.chapters.length*100); }
 function refreshProg(){ const p=overallPct(); document.getElementById('pfill').style.width=p+'%'; document.getElementById('ppct').textContent=p+'%'; const bp=document.getElementById('mbig-prog'); if(bp) bp.textContent=p+'%'; }
-async function saveProgress(){ refreshProg(); try{ if(gu&&gu.sb&&S.uid){ await gu.sb.from('progress').upsert({user_id:S.uid,book_id:BOOK,chapter:(Object.keys(S.done).filter(k=>S.done[k]).length)||1,pct:overallPct(),updated_at:new Date().toISOString()},{onConflict:'user_id,book_id'}); } }catch(e){} }
-function backToPortal(){ location.href=DEMO?'/':'portal.html'; }
+async function saveProgress(){ refreshProg(); try{ if(!SAMPLE&&gu&&gu.sb&&S.uid){ await gu.sb.from('progress').upsert({user_id:S.uid,book_id:BOOK,chapter:(Object.keys(S.done).filter(k=>S.done[k]).length)||1,pct:overallPct(),updated_at:new Date().toISOString()},{onConflict:'user_id,book_id'}); } }catch(e){} }
+function backToPortal(){ location.href='portal.html'; }
 
-const DEMO = P.get('demo')==='1';
-async function bootDemo(){
-  // Free demo: public sample chapters from /demo/<book>.json, no login, nothing saved.
-  try{ const r=await fetch('demo/'+encodeURIComponent(BOOK)+'.json'); if(!r.ok) throw 0; D=await r.json(); }
-  catch(e){ document.getElementById('gate').innerHTML='Demo not available. <a style="color:#e0a668" href="demo.html">Back to demos</a>'; return; }
-  document.getElementById('btitle').textContent=(D.title||'GearUp')+' · free demo';
-  const bk=document.querySelector('.rbar .back'); if(bk) bk.textContent='← GearUp';
+const DEMO = false; // free chapters now need a (free) reader account
+let SAMPLE = false;
+async function bootSample(){
+  // Not bought yet: load the free sample (front matter + first 2 chapters). Never cached as the full book.
+  try{
+    document.getElementById('gate').textContent='Loading your free chapters…';
+    const t=await gu.token();
+    const r=await fetch('/api/book-data?sample=1&book='+encodeURIComponent(BOOK),{headers:{Authorization:'Bearer '+t}});
+    const meta=await r.json(); if(!meta.url) throw new Error(meta.error||'no data');
+    const dr=await fetch(meta.url); D=await dr.json();
+  }catch(e){ document.getElementById('gate').innerHTML='Could not load the free chapters. <a style="color:#e0a668" href="portal.html">Back to my i-Books</a>'; return; }
+  SAMPLE=true;
+  document.getElementById('btitle').textContent=(D.title||'GearUp')+' · 2 free chapters';
+  const bk=document.querySelector('.rbar .back'); if(bk) bk.textContent='← My i-Books';
   document.getElementById('gate').style.display='none'; document.getElementById('app').style.display='block';
   document.getElementById('mface').innerHTML='<img src="'+faceImg('confident')+'" alt="">';
-  setMascot('confident','Welcome! This is a free sample, dive in. 🔧',true);
+  setMascot('confident','Your first 2 chapters are free. Dive in! 🔧',true);
   const first=Math.max(0,D.chapters.findIndex(c=>!c.locked));
   renderNav(); openChapter(first); refreshProg();
 }
 async function boot(){
-  if(DEMO) return bootDemo();
   gu = GearUpAuth(GEARUP_CONFIG.SUPABASE_URL, GEARUP_CONFIG.SUPABASE_ANON_KEY);
   let u=null; try{ u=await gu.getUser(); }catch(e){}
-  if(!u){ location.href='login.html'; return; }
+  if(!u){ location.href='register.html?next='+encodeURIComponent('reader.html?book='+BOOK); return; }
   S.uid=u.id;
   try{ await gu.claimSession(); }catch(e){}
   let owned=[]; try{ owned=await gu.ownedBooks(); }catch(e){}
-  if(!owned.includes(BOOK)){ document.getElementById('gate').innerHTML='You don\'t own this book yet. <a style="color:#e0a668" href="portal.html">Back to portal</a>'; return; }
+  if(!owned.includes(BOOK)) return bootSample();
   // fetch gated book data, served from the device after the first download (no data, instant)
   try{
     const wantFresh = new URLSearchParams(location.search).get('fresh')==='1';

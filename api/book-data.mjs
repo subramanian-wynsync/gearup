@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+import sampleHandler from './_lib/sample.mjs';
 export default async function handler(req, res) {
+  // ?sample=1 → free chapters for any signed-in reader (see _lib/sample.mjs)
+  if (String(req.query.sample||'')==='1') return sampleHandler(req, res);
   const token = (req.headers.authorization||'').replace('Bearer ','');
   const book = (req.query.book||'').toString();
   if(!token||!book) return res.status(400).json({error:'missing'});

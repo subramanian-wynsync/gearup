@@ -40,7 +40,7 @@
     onlyOnPaths: ['/', '/index.html', '/index'],
 
     /* The words. Kept identical to the video.                             */
-    tagline: 'Interactive engineering books · AI interview coach',
+    tagline: 'Interactive engineering i-Books · Read 2 chapters free',
     subline: 'For mechanical & automotive engineers'
   };
 

@@ -23,19 +23,17 @@ const STEPS = [
     subject: 'Did the 20 questions help? Here is the next step 🔧',
     build: () => H('How did the 20 questions land?') +
       `<p>A couple of days ago you grabbed my starter pack. If you worked through it, you already know the pattern: interviewers do not want definitions, they want to hear that you understand the idea behind them.</p>
-       <p>Here is the fastest way to feel that difference: my new <strong style="color:#fff">AI Interview Coach</strong> will interview you out loud, one telephonic question and one video question, completely free. It scores your answer, coaches your language and presence, and points you to the exact chapter to fix.</p>` +
-      btn('Try a free AI interview →', SITE + '/coach.html') +
-      `<p>Prefer to read first? The book demos are open too, no login and no payment: read the first topics in the real reader and take the quiz.</p>` +
-      btn('Open the free book demos →', SITE + '/demo.html') +
-      `<p style="color:#9fb2d4;font-size:13px">Stuck on one of the 20? Reply with the question and I will answer it personally.</p>` },
+       <p>The fastest way to build that: read the first 2 chapters of any GearUp i-Book, free. Real figures, interview Q&amp;A after every topic, and a quiz that scores you. It takes one minute to create your free reader account.</p>` +
+      btn('Read 2 free chapters →', SITE + '/register.html') +
+      `<p>Want to practise answering out loud as well? Our sister product <a href="https://wynsync.tech/education/wynrise" style="color:#e0a668">WynRise</a> runs AI mock interviews with a full scorecard.</p>
+       <p style="color:#9fb2d4;font-size:13px">Stuck on one of the 20? Reply with the question and I will answer it personally.</p>` },
   { flag: 'd6_sent', day: 6, maxDay: 14,
     subject: 'From 20 questions to 4,000: how readers prepare with GearUp 📘',
     build: () => H('From 20 questions to 4,000') +
-      `<p>The starter pack gave you 20 questions. The full GearUp library has more than 4,000, spread across five interactive books and 129 chapters: automotive design, Body in White, plastics and glazing, FEA and CFD.</p>
+      `<p>The starter pack gave you 20 questions. The full GearUp library has more than 4,000, spread across five interactive i-Books and 129 chapters: automotive design, Body in White, plastics and glazing, FEA and CFD.</p>
        <p>They are not theory collections. I wrote them from 18 years as a design, development and supplier quality engineer with Nissan, Mercedes-Benz and Scania, and they read like a game: chapter quizzes, progress tracking, and a mechanic who keeps you company while you study.</p>
-       <p>You can start with one book, and the discount grows as you add more. Right now the launch offer puts the complete set of five at $39 with lifetime access, on any device.</p>
-       <p>And when you are ready to practise out loud, the <strong style="color:#fff">AI Interview Coach</strong> gives you 50 mock interviews a month, telephonic and video rounds with a live AI interviewer, for $6.99 a month. That is about 14 cents per interview.</p>` +
-      btn('Explore the books and the Coach →', SITE) +
+       <p>Start with the 2 free chapters of any i-Book. When you buy, the discount grows with every book: 2 books 10% off, 3 books 15%, 4 books 20%, and all 5 at 30% off, with lifetime access on any device.</p>` +
+      btn('Explore the i-Books →', SITE + '/#books') +
       `<p style="color:#9fb2d4;font-size:13px">Not sure which book fits your target role? Reply and tell me the role, I will point you to the right one.</p>` },
 ];
 

@@ -1,20 +1,14 @@
 import Stripe from 'stripe';
+import { createClient } from '@supabase/supabase-js';
+import { BOOKS, ALL, quote, currencyForCountry } from './_lib/pricing.mjs';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-// Catalogue — prices in USD. No Stripe Price IDs needed: line items are built inline.
-const CAT = {
-  biw:      { name: 'Body in White',                            price: 15 },   // launch offer (was 29)
-  plastics: { name: 'Automotive Plastics & Glazing',            price: 15 },   // launch offer (was 29)
-  design:   { name: 'Cracking the Automotive Design Interview', price: 10 },   // launch offer (was 19)
-  fea:      { name: 'Cracking the FEA & Simulation Interview',  price: 10 },   // launch offer (was 19)
-  cfd:      { name: 'The Complete CFD Engineer',                price: 10 },   // launch offer (was 19)
-};
-const ALL = ['biw','plastics','design','fea','cfd'];
-const BUNDLE_PRICE = 39;   // launch offer (was 79)
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 // Public cover art shown on the Stripe checkout line items (canonical www domain).
 const IMG_BASE = 'https://www.gearup.study/covers';
 
 export default async function handler(req, res) {
+  // GET → which currency this visitor pays in (same geo rule as checkout), used by /pricing.js
+  if (req.method === 'GET') { res.setHeader('Cache-Control','private, no-store'); return res.status(200).json({ currency: currencyForCountry(req.headers['x-vercel-ip-country']), country: req.headers['x-vercel-ip-country'] || '' }); }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   try {
     let { items } = req.body || {};
@@ -24,51 +18,56 @@ export default async function handler(req, res) {
     // Normalise: a "bundle" pick means all five books.
     let ids = [...new Set(items)];
     if (ids.includes('bundle')) ids = [...ALL];
-    ids = ids.filter(id => CAT[id]);
+    ids = ids.filter(id => BOOKS[id]);
     if (!ids.length) return res.status(400).json({ error: 'Your cart is empty' });
 
-    const origin = req.headers.origin
-      || (req.headers.host ? 'https://' + req.headers.host : '');
+    // Currency follows the visitor's country (same rule as /api/pricing, so the price shown is the price charged).
+    const currency = currencyForCountry(req.headers['x-vercel-ip-country']);
+    const q = quote(ids, currency);
+
+    // If the buyer is signed in, tie the purchase to their account.
+    let user = null;
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (token) { try { const { data } = await supabase.auth.getUser(token); user = data?.user || null; } catch {} }
+
+    const origin = req.headers.origin || (req.headers.host ? 'https://' + req.headers.host : '');
 
     // Full-price line items (itemised so the receipt lists each book).
-    const line_items = ids.map(id => ({
+    const line_items = q.ids.map(id => ({
       quantity: 1,
       price_data: {
-        currency: 'usd',
-        unit_amount: CAT[id].price * 100,
-        product_data: { name: CAT[id].name, images: [`${IMG_BASE}/${id}.jpg`] },
+        currency,
+        unit_amount: BOOKS[id][currency],
+        product_data: { name: BOOKS[id].name, images: [`${IMG_BASE}/${id}.jpg`] },
       },
     }));
 
-    // Multi-buy discount — mirrors the cart on the store.
-    const sum = ids.reduce((t, id) => t + CAT[id].price, 0);
-    let total = sum;
-    const n = ids.length;
-    if (n >= 5)      total = BUNDLE_PRICE;
-    else if (n >= 3) total = Math.round(sum * 0.85);
-    else if (n === 2) total = Math.round(sum * 0.92);
-
     const discounts = [];
-    if (total < sum) {
+    if (q.saved > 0) {
       const coupon = await stripe.coupons.create({
-        amount_off: (sum - total) * 100,
-        currency: 'usd',
+        amount_off: q.saved,
+        currency,
         duration: 'once',
-        name: n >= 5 ? 'Full library bundle' : `Multi-book discount (${n} books)`,
+        name: q.ids.length >= 5 ? 'All 5 i-Books: 30% off' : `${q.ids.length} i-Books: ${Math.round(q.discount * 100)}% off`,
       });
       discounts.push({ coupon: coupon.id });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const meta = { gearup_items: q.ids.join(','), gearup_currency: currency };
+    if (user) meta.gearup_uid = user.id;
+
+    const params = {
       mode: 'payment',
       line_items,
       discounts,
-      metadata: { gearup_items: ids.join(',') },
-      payment_intent_data: { metadata: { gearup_items: ids.join(',') } },
-      success_url: origin + '/login.html?welcome=1',
-      cancel_url: origin + '/',
+      metadata: meta,
+      payment_intent_data: { metadata: meta },
+      success_url: origin + (user ? '/portal.html?paid=1' : '/login.html?welcome=1'),
+      cancel_url: origin + (user ? '/portal.html' : '/#books'),
       billing_address_collection: 'auto',
-    });
+    };
+    if (user?.email) params.customer_email = user.email;
+    const session = await stripe.checkout.sessions.create(params);
 
     return res.status(200).json({ url: session.url });
   } catch (e) {
